@@ -36,7 +36,7 @@
                         triggerOn: 'mousemove',
                         formatter: function (params, ticket, callback) {
                             node_go = go_data[params.name]
-                            var content = `<h1 style="text-align:center;">${params.name}</h1><table><thead><tr><th>GO Category</th><th>GO ID</th><th>Name</th><th>p-Value</th></tr></thead><tbody><tr><td>Biological Process</td><td>${node_go['gobp']['id']}</td><td>${node_go['gobp']['name']}</td><td>${node_go['gobp']['p']}</td></tr><tr><td>Cellular Component</td><td>${node_go['gocc']['id']}</td><td>${node_go['gocc']['name']}</td><td>${node_go['gocc']['p']}</td></tr><tr><td>Molecular Function</td><td>${node_go['gomf']['id']}</td><td>${node_go['gomf']['name']}</td><td>${node_go['gomf']['p']}</td></tr></tbody></table>`;
+                            var content = `<h1 style="text-align:center;">${params.name}</h1><h2>Cancer Hallmarks:</h2><br><h3 style="text-align:center;">Top GO Terms</h3><table><thead><tr><th>GO Category</th><th>GO ID</th><th>Name</th><th>p-Value</th></tr></thead><tbody><tr><td>Biological Process</td><td>${node_go['gobp']['id']}</td><td>${node_go['gobp']['name']}</td><td>${node_go['gobp']['p']}</td></tr><tr><td>Cellular Component</td><td>${node_go['gocc']['id']}</td><td>${node_go['gocc']['name']}</td><td>${node_go['gocc']['p']}</td></tr><tr><td>Molecular Function</td><td>${node_go['gomf']['id']}</td><td>${node_go['gomf']['name']}</td><td>${node_go['gomf']['p']}</td></tr></tbody></table>`;
                             let el = document.createElement('div');
                             el.innerHTML = content;
                             return el;
@@ -54,7 +54,7 @@
                             right: '10%',
                             layout: 'radial',
                             symbol: 'emptyCircle',
-                            symbolSize: 5,
+                            symbolSize: 20,
                             initialTreeDepth: 1,
                             label: {
                                 position: 'top',
@@ -74,6 +74,14 @@
                             animationDurationUpdate: 750,
                             emphasis: {
                                 focus: 'descendant'
+                            },
+                            lineStyle: {
+                                width: 5,
+                                color: "yellow"
+                            },
+                            itemStyle: {
+                                borderWidth: 1,
+                                color: "yellow",
                             }
                         }
                     ]
