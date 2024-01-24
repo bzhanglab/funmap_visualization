@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>FunMap Radial Tree Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
+</head>
+<body>
+    <div id="chart" style="width: 600px; height: 400px;"></div>
+
+    <script>
+        fetch("funmap.json").then((res) => res.json()).then((chartData) => {
+            var chartOptions = {
+                series: [
+                    {
+                        type: 'tree',
+                        data: [chartData],
+                        top: '10%',
+                        bottom: '10%',
+                        left: '10%',
+                        right: '10%',
+                        layout: 'radial',
+                        symbol: 'emptyCircle',
+                        symbolSize: 7,
+                        initialTreeDepth: 1,
+                        label: {
+                            position: 'top',
+                            verticalAlign: 'middle',
+                            align: 'right',
+                            fontSize: 9
+                        },
+                        leaves: {
+                            label: {
+                                position: 'bottom',
+                                verticalAlign: 'middle',
+                                align: 'left'
+                            }
+                        },
+                        expandAndCollapse: true,
+                        animationDuration: 550,
+                        animationDurationUpdate: 750
+                    }
+                ]
+            };
+    
+            // Initialize the chart
+            var chart = echarts.init(document.getElementById('chart'));
+            chart.setOption(chartOptions);
+        });
+    </script>
+</body>
+</html>
