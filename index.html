@@ -56,7 +56,7 @@
         #legend {
             position: absolute;
             top: 0;
-            left: 0%;
+            left: 0;
             height: 10%;
             border: inherit;
             border-radius: inherit;
@@ -78,6 +78,7 @@
         #legend:hover {
             opacity: 1;
             transition-duration: 0.5s;
+            left: 0;
         }
 
         #pie_chart_container:hover>#pie_chart_grey {
@@ -104,21 +105,27 @@
             height: 1.5em;
             width: 1.5em;
         }
+        a {
+            color: #000;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <div id="outer">
-        <div id="chart" style="width: 100%; height: 100%;"></div>
-        <div id="legend">
-            <h3 style="text-align: center">Legend</h3>
-            <ul style="list-style-type: none; line-height: 1.3">
-                <li><img class="svg" src="./assets/diamond.svg"> Node with children (click to expand)</li>
-                <li><img class="svg" src="./assets/circle.svg"> Expanded node</li>
-                <li><b>Fill Color</b> - Signed log10 meta-p value</li>
-                <li><b>Edge Color</b> - Cancer hallmark</li>
-            </ul>
-        </div>
+            <div id="chart" style="width: 100%; height: 100%;"></div>
+            <div id="legend">
+                <!-- Content of the drawer -->
+                <p>Visualize and interact with the hierarchical structure of <a href="https://github.com/bzhanglab/funmap" target="_blank">FunMap</a>.<br><br> Click on collapsed nodes to view children. Hover over nodes to see more information about the module.</p>
+                <h3 style="text-align: center">Legend</h3>
+                <ul style="list-style-type: none; line-height: 1.3">
+                    <li><img class="svg" src="./assets/diamond.svg"> Collapsed node</li>
+                    <li><img class="svg" src="./assets/circle.svg"> Expanded node</li>
+                    <li><b>Fill Color</b> - Signed log10 meta-p value</li>
+                    <li><b>Edge Color</b> - Cancer hallmark</li>
+                </ul>
+            </div>
         <div id="pie_chart_container">
             <div id="pie_chart_grey" style="width: 100%; height: 100%;"></div>
             <div id="pie_chart" style="width: 100%; height: 100%;"></div>
