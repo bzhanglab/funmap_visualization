@@ -85,7 +85,12 @@
     <script>
         fetch("data/go.json").then((res) => res.json()).then((go_data) => {
             fetch("data/funmap.json").then((res) => res.json()).then((chartData) => {
-                var chartOptions = {
+                var chartOptions = {                    
+                    title: {
+                        text: 'FunMap Hierarchical Tree Chart',
+                        subtext: 'Network modules description',
+                        left: 'center'
+                    },
                     tooltip: {
                         trigger: 'item',
                         triggerOn: 'mousemove',
@@ -167,9 +172,8 @@
                 var option;
 
                 option = {
-                    
-                    legend: {
-                        top: '0%',
+                    title: {
+                        text: 'Hallmark Key',
                         left: 'center'
                     },
                     series: [
