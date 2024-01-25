@@ -11,7 +11,6 @@
         body {
             height: 100%;
             margin: 0;
-
         }
 
         #outer {
@@ -84,6 +83,14 @@
         </div>
     </div>
     <script>
+        function toTitleCase(str) {
+            return str.replace(
+              /\w\S*/g,
+              function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+              }
+            );
+          }
         fetch("data/go.json").then((res) => res.json()).then((go_data) => {
             fetch("data/funmap.json").then((res) => res.json()).then((chartData) => {
                 var chartOptions = {
@@ -97,7 +104,15 @@
                         triggerOn: 'mousemove',
                         formatter: function (params, ticket, callback) {
                             node_go = go_data[params.name]
-                            var content = `<h1 style="text-align:center;">${params.name}</h1><h2>Cancer Hallmarks:</h2><br><h3 style="text-align:center;">Top GO Terms</h3><table><thead><tr><th>GO Category</th><th>GO ID</th><th>Name</th><th>p-Value</th></tr></thead><tbody><tr><td>Biological Process</td><td>${node_go['gobp']['id']}</td><td>${node_go['gobp']['name']}</td><td>${node_go['gobp']['p']}</td></tr><tr><td>Cellular Component</td><td>${node_go['gocc']['id']}</td><td>${node_go['gocc']['name']}</td><td>${node_go['gocc']['p']}</td></tr><tr><td>Molecular Function</td><td>${node_go['gomf']['id']}</td><td>${node_go['gomf']['name']}</td><td>${node_go['gomf']['p']}</td></tr></tbody></table>`;
+                            let hallmark_string = ""
+                            for (let i = 0; i < params.data.hallmarks.length; i++) {
+                                hallmark_string += toTitleCase(params.data.hallmarks[i]) + ", "
+                            }
+                            hallmark_string = hallmark_string.slice(0, -2)
+                            if (hallmark_string == "") {
+                                hallmark_string = "No Hallmarks"
+                            }
+                            var content = `<h1 style="text-align:center;">${params.name}</h1><h2>Cancer Hallmarks: ${hallmark_string}</h2><br><h3 style="text-align:center;">Top GO Terms</h3><table style="width: 100%"><thead><tr><th>GO Category</th><th>GO ID</th><th>Name</th><th>p-Value</th></tr></thead><tbody><tr><td>Biological Process</td><td>${node_go['gobp']['id']}</td><td>${node_go['gobp']['name']}</td><td>${node_go['gobp']['p']}</td></tr><tr><td>Cellular Component</td><td>${node_go['gocc']['id']}</td><td>${node_go['gocc']['name']}</td><td>${node_go['gocc']['p']}</td></tr><tr><td>Molecular Function</td><td>${node_go['gomf']['id']}</td><td>${node_go['gomf']['name']}</td><td>${node_go['gomf']['p']}</td></tr></tbody></table>`;
                             let el = document.createElement('div');
                             el.innerHTML = content;
                             return el;
@@ -123,7 +138,6 @@
                             right: '10%',
                             layout: 'radial',
                             symbol: (value, params) => {
-                                console.log(params)
                                 node = params.data
                                 if (node.children && node.children.length > 0 && params.collapsed) {
                                     return "roundRect"
@@ -150,7 +164,7 @@
                             animationDuration: 550,
                             animationDurationUpdate: 750,
                             emphasis: {
-                                focus: 'descendant'
+                                focus: 'relative'
                             },
                             lineStyle: {
                                 width: 5,
@@ -168,8 +182,8 @@
                 var chart = echarts.init(document.getElementById('chart'));
                 chart.setOption(chartOptions);
 
-                var chartDom = document.getElementById('pie_chart');
-                var myChart = echarts.init(chartDom);
+                var pieChartDom = document.getElementById('pie_chart');
+                var pie_chart = echarts.init(pieChartDom);
                 var option;
 
                 option = {
@@ -212,22 +226,38 @@
                     ]
                 };
 
-                option && myChart.setOption(option);
+                option && pie_chart.setOption(option);
                 function resize_pie_chart() {
-                    myChart.resize({
-                        width: chartDom.clientWidth,
-                        height: chartDom.clientHeight,
+                    pie_chart.resize({
+                        width: pieChartDom.clientWidth,
+                        height: pieChartDom.clientHeight,
                         animation: {
                             duration: 500
                         }
                     });
                     setTimeout(() => {
-                        myChart.clear();
-                        myChart.setOption(option, true);
+                        pie_chart.clear();
+                        pie_chart.setOption(option, true);
                     }, 1)
 
                 }
-                new ResizeObserver(resize_pie_chart).observe(chartDom)
+                new ResizeObserver(resize_pie_chart).observe(pieChartDom)
+                pie_chart.on('mouseover', function (params) {
+                    let indices = [];
+                    for (let i = 0; i < chartOptions.series[0].data[0].children.length; i++) {
+                        if (chartOptions.series[0].data[0].children[i].hallmarks[0] == params.name) {
+                            indices.push(chartOptions.series[0].data[0].children[i].name)
+                        } else if (params.name == "NONE" && chartOptions.series[0].data[0].children[i].hallmarks.length == 0) {
+                            indices.push(chartOptions.series[0].data[0].children[i].name)
+                        }
+                    }
+                    chart.dispatchAction({
+                        type: 'highlight',
+                        seriesIndex: 0,
+                        name: indices
+                    });
+                });
+                
             })
         });
     </script>
