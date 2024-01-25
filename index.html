@@ -51,11 +51,11 @@
             z-index: 1001;
             pointer-events: none;
             transition-duration: 0.5s;
-            background-color: rgba(0, 0, 0, 0.25);
+            background-color: rgba(140, 140, 140, 0.25);
         }
 
-        #pie_chart_container:hover > #pie_chart_grey{
-            background-color: rgba(0, 0, 0, 0);
+        #pie_chart_container:hover>#pie_chart_grey {
+            background-color: rgba(1, 1, 1, 0);
             transition-duration: 0.5s;
         }
 
@@ -78,14 +78,15 @@
 <body>
     <div id="outer">
         <div id="chart" style="width: 100%; height: 100%;"></div>
-        
-        <div id="pie_chart_container"><div id="pie_chart_grey" style="width: 100%; height: 100%;"></div><div id="pie_chart" style="width: 100%; height: 100%;"></div>
+        <div id="pie_chart_container">
+            <div id="pie_chart_grey" style="width: 100%; height: 100%;"></div>
+            <div id="pie_chart" style="width: 100%; height: 100%;"></div>
         </div>
     </div>
     <script>
         fetch("data/go.json").then((res) => res.json()).then((go_data) => {
             fetch("data/funmap.json").then((res) => res.json()).then((chartData) => {
-                var chartOptions = {                    
+                var chartOptions = {
                     title: {
                         text: 'FunMap Hierarchical Tree Chart',
                         subtext: 'Network modules description',
@@ -206,7 +207,7 @@
                             labelLine: {
                                 show: false
                             },
-                            data: [{"name": "TUMOR PROMOTING INFLAMMATION", "value": 1, "itemStyle": {"color": "rgba(213, 101, 23, 0.65)"}}, {"name": "GENOME INSTABILITY AND MUTATION", "value": 1, "itemStyle": {"color": "rgba(21, 41, 132, 0.65)"}}, {"name": "INDUCING ANGIOGENESIS", "value": 1, "itemStyle": {"color": "rgba(232, 35, 40, 0.65)"}}, {"name": "ACTIVATING INVASION AND METASTASIS", "value": 1, "itemStyle": {"color": "rgba(25, 23, 24, 0.65)"}}, {"name": "DEREGULATING CELLULAR ENERGETICS", "value": 1, "itemStyle": {"color": "rgba(106, 42, 133, 0.65)"}}, {"name": "ENABLING REPLICATIVE IMMORTALITY", "value": 1, "itemStyle": {"color": "rgba(13, 104, 161, 0.65)"}}, {"name": "RESISTING CELL DEATH", "value": 1, "itemStyle": {"color": "rgba(112, 125, 134, 0.65)"}}, {"name": "EVADING GROWTH SUPPRESSORS", "value": 1, "itemStyle": {"color": "rgba(96, 50, 2, 0.65)"}}, {"name": "SUSTAINING PROLIFERATIVE SIGNALING", "value": 1, "itemStyle": {"color": "rgba(21, 143, 72, 0.65)"}}, {"name": "AVOIDING IMMUNE DESTRUCTION", "value": 1, "itemStyle": {"color": "rgba(194, 0, 126, 0.65)"}}, {"name": "NONE", "value": 1, "itemStyle": {"color": "rgba(220, 211, 182, 0.65)"}}]
+                            data: [{ "name": "TUMOR PROMOTING INFLAMMATION", "value": 1, "itemStyle": { "color": "rgba(213, 101, 23, 0.65)" } }, { "name": "GENOME INSTABILITY AND MUTATION", "value": 1, "itemStyle": { "color": "rgba(21, 41, 132, 0.65)" } }, { "name": "INDUCING ANGIOGENESIS", "value": 1, "itemStyle": { "color": "rgba(232, 35, 40, 0.65)" } }, { "name": "ACTIVATING INVASION AND METASTASIS", "value": 1, "itemStyle": { "color": "rgba(25, 23, 24, 0.65)" } }, { "name": "DEREGULATING CELLULAR ENERGETICS", "value": 1, "itemStyle": { "color": "rgba(106, 42, 133, 0.65)" } }, { "name": "ENABLING REPLICATIVE IMMORTALITY", "value": 1, "itemStyle": { "color": "rgba(13, 104, 161, 0.65)" } }, { "name": "RESISTING CELL DEATH", "value": 1, "itemStyle": { "color": "rgba(112, 125, 134, 0.65)" } }, { "name": "EVADING GROWTH SUPPRESSORS", "value": 1, "itemStyle": { "color": "rgba(96, 50, 2, 0.65)" } }, { "name": "SUSTAINING PROLIFERATIVE SIGNALING", "value": 1, "itemStyle": { "color": "rgba(21, 143, 72, 0.65)" } }, { "name": "AVOIDING IMMUNE DESTRUCTION", "value": 1, "itemStyle": { "color": "rgba(194, 0, 126, 0.65)" } }, { "name": "NONE", "value": 1, "itemStyle": { "color": "rgba(220, 211, 182, 0.65)" } }]
                         }
                     ]
                 };
@@ -224,7 +225,7 @@
                         myChart.clear();
                         myChart.setOption(option, true);
                     }, 1)
-                    
+
                 }
                 new ResizeObserver(resize_pie_chart).observe(chartDom)
             })
