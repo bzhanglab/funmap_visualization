@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
-    <title>FunMap Radial Tree Chart</title>
+    <title>FunMap Hierarchical Organization</title>
     <script src="js/echarts.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css">
@@ -85,19 +84,23 @@
     <script>
         function toTitleCase(str) {
             return str.replace(
-              /\w\S*/g,
-              function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-              }
+                /\w\S*/g,
+                function (txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                }
             );
-          }
+        }
         fetch("data/go.json").then((res) => res.json()).then((go_data) => {
             fetch("data/funmap.json").then((res) => res.json()).then((chartData) => {
                 var chartOptions = {
                     title: {
-                        text: 'FunMap Hierarchical Tree Chart',
-                        subtext: 'Network modules description',
-                        left: 'center'
+                        text: 'FunMap Hierarchical Organization',
+                        left: 'center',
+                        textStyle: {
+                            fontSize: 30,
+                            fontWeight: 'bolder',
+                            color: '#333'
+                        }
                     },
                     tooltip: {
                         trigger: 'item',
@@ -111,7 +114,7 @@
                                 }
                                 hallmark_string = hallmark_string.slice(0, -2)
                             }
-                            
+
                             if (hallmark_string == "") {
                                 hallmark_string = "No Hallmarks"
                             }
@@ -125,7 +128,7 @@
                         show: true,
                         feature: {
                             restore: {},
-                            saveAsImage: {}
+                            saveAsImage: {},
                         }
                     },
                     series: [
@@ -147,14 +150,14 @@
                                     return "circle"
                                 }
                             },
-                            
+
                             symbolSize: 20,
                             initialTreeDepth: 1,
                             label: {
                                 position: 'top',
                                 verticalAlign: 'middle',
                                 align: 'right',
-                                fontSize: 18,
+                                fontSize: 12,
                             },
                             leaves: {
                                 label: {
@@ -182,17 +185,26 @@
                         type: 'continuous',
                         min: -165,
                         max: 165,
-                        text:["Higher in Tumor", "Lower in Tumor"],
-                        precision: 10,
+                        seriesIndex: 0,
+                        title: {
+                            text: 'Signed log10 meta-p',
+                            left: 'center',
+                            top: 'bottom'
+                        },
+                        text: ["Signed log10 meta-p\n\nHigher in Tumor compared to Normal", "Lower in Tumor compared to Normal"],
+                        precision: 3,
                         inRange: {
-                          color: ['#67001f','#b2182b','#d6604d','#f4a582','#fddbc7','#f7f7f7','#d1e5f0','#92c5de','#4393c3','#2166ac','#053061'].reverse(),
+                            color: ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#f7f7f7', '#d1e5f0', '#92c5de', '#4393c3', '#2166ac', '#053061'].reverse(),
                         }
-                      },
+                    },
                 };
 
                 // Initialize the chart
                 var chart = echarts.init(document.getElementById('chart'));
                 chart.setOption(chartOptions);
+                window.addEventListener('resize', function () {
+                    chart.resize();
+                });
 
                 var pieChartDom = document.getElementById('pie_chart');
                 var pie_chart = echarts.init(pieChartDom);
@@ -207,7 +219,7 @@
                         {
                             animationDuration: 0,
                             animationDurationUpdate: 0,
-                            name: 'Access From',
+                            name: 'Hallmark Key',
                             type: 'pie',
                             radius: ['40%', '70%'],
                             avoidLabelOverlap: false,
@@ -233,7 +245,7 @@
                             labelLine: {
                                 show: false
                             },
-                            data: [{"name": "TUMOR PROMOTING INFLAMMATION", "value": 1, "itemStyle": {"color": "rgba(213, 101, 23, 0.55)"}}, {"name": "GENOME INSTABILITY AND MUTATION", "value": 1, "itemStyle": {"color": "rgba(21, 41, 132, 0.55)"}}, {"name": "INDUCING ANGIOGENESIS", "value": 1, "itemStyle": {"color": "rgba(232, 35, 40, 0.55)"}}, {"name": "ACTIVATING INVASION AND METASTASIS", "value": 1, "itemStyle": {"color": "rgba(25, 23, 24, 0.55)"}}, {"name": "DEREGULATING CELLULAR ENERGETICS", "value": 1, "itemStyle": {"color": "rgba(106, 42, 133, 0.55)"}}, {"name": "ENABLING REPLICATIVE IMMORTALITY", "value": 1, "itemStyle": {"color": "rgba(13, 104, 161, 0.55)"}}, {"name": "RESISTING CELL DEATH", "value": 1, "itemStyle": {"color": "rgba(112, 125, 134, 0.55)"}}, {"name": "EVADING GROWTH SUPPRESSORS", "value": 1, "itemStyle": {"color": "rgba(96, 50, 2, 0.55)"}}, {"name": "SUSTAINING PROLIFERATIVE SIGNALING", "value": 1, "itemStyle": {"color": "rgba(21, 143, 72, 0.55)"}}, {"name": "AVOIDING IMMUNE DESTRUCTION", "value": 1, "itemStyle": {"color": "rgba(194, 0, 126, 0.55)"}}, {"name": "NONE", "value": 1, "itemStyle": {"color": "rgba(220, 211, 182, 0.55)"}}]
+                            data: [{ "name": "EVADING GROWTH SUPPRESSORS", "value": 1, "itemStyle": { "color": "rgba(96, 50, 2, 0.55)" } }, { "name": "AVOIDING IMMUNE DESTRUCTION", "value": 1, "itemStyle": { "color": "rgba(194, 0, 126, 0.55)" } }, { "name": "ENABLING REPLICATIVE IMMORTALITY", "value": 1, "itemStyle": { "color": "rgba(13, 104, 161, 0.55)" } }, { "name": "TUMOR PROMOTING INFLAMMATION", "value": 1, "itemStyle": { "color": "rgba(213, 101, 23, 0.55)" } }, { "name": "ACTIVATING INVASION AND METASTASIS", "value": 1, "itemStyle": { "color": "rgba(25, 23, 24, 0.55)" } }, { "name": "INDUCING ANGIOGENESIS", "value": 1, "itemStyle": { "color": "rgba(232, 35, 40, 0.55)" } }, { "name": "GENOME INSTABILITY AND MUTATION", "value": 1, "itemStyle": { "color": "rgba(21, 41, 132, 0.55)" } }, { "name": "RESISTING CELL DEATH", "value": 1, "itemStyle": { "color": "rgba(112, 125, 134, 0.55)" } }, { "name": "DEREGULATING CELLULAR ENERGETICS", "value": 1, "itemStyle": { "color": "rgba(106, 42, 133, 0.55)" } }, { "name": "SUSTAINING PROLIFERATIVE SIGNALING", "value": 1, "itemStyle": { "color": "rgba(21, 143, 72, 0.55)" } }, { "name": "NONE", "value": 1, "itemStyle": { "color": "rgba(220, 211, 182, 0.55)" } }]
                         }
                     ]
                 };
@@ -251,7 +263,6 @@
                         pie_chart.clear();
                         pie_chart.setOption(option, true);
                     }, 1)
-
                 }
                 new ResizeObserver(resize_pie_chart).observe(pieChartDom)
                 pie_chart.on('mouseover', function (params) {
@@ -269,7 +280,7 @@
                         name: indices
                     });
                 });
-                
+
             })
         });
     </script>
