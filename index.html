@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>FunMap Hierarchical Organization</title>
@@ -46,10 +47,37 @@
             border: inherit;
             border-radius: inherit;
             width: 10%;
-            z-index: 1001;
+            z-index: 1000;
             pointer-events: none;
             transition-duration: 0.5s;
             background-color: rgba(140, 140, 140, 0.25);
+        }
+
+        #legend {
+            position: absolute;
+            top: 0;
+            left: 0%;
+            height: 10%;
+            border: inherit;
+            border-radius: inherit;
+            width: 20%;
+            z-index: 1001;
+            transition-duration: 0.5s;
+            padding-left: 1%;
+            padding-top: 1%;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: left;
+            opacity: .5;
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        #legend:hover {
+            opacity: 1;
+            transition-duration: 0.5s;
         }
 
         #pie_chart_container:hover>#pie_chart_grey {
@@ -70,12 +98,27 @@
             text-align: center;
             vertical-align: middle;
         }
+
+        .svg {
+            line-height: 5;
+            height: 1.5em;
+            width: 1.5em;
+        }
     </style>
 </head>
 
 <body>
     <div id="outer">
         <div id="chart" style="width: 100%; height: 100%;"></div>
+        <div id="legend">
+            <h3 style="text-align: center">Legend</h3>
+            <ul style="list-style-type: none; line-height: 1.3">
+                <li><img class="svg" src="./assets/squircle.svg"> Node with children</li>
+                <li><img class="svg" src="./assets/circle.svg"> Node without children</li>
+                <li><b>Fill Color</b> - signed log10 meta-p value</li>
+                <li><b>Edge Color</b> - cancer hallmark</li>
+            </ul>
+        </div>
         <div id="pie_chart_container">
             <div id="pie_chart_grey" style="width: 100%; height: 100%;"></div>
             <div id="pie_chart" style="width: 100%; height: 100%;"></div>
@@ -175,6 +218,7 @@
                             itemStyle: {
                                 borderWidth: 1,
                                 color: "yellow",
+                                borderColor: "black"
                             },
                             emphasis: {
                                 focus: 'ancestor'
@@ -268,7 +312,7 @@
                 pie_chart.on('mouseover', function (params) {
                     let indices = [];
                     for (let i = 0; i < chartOptions.series[0].data[0].children.length; i++) {
-                        if (chartOptions.series[0].data[0].children[i].hallmarks[0] == params.name) {
+                        if (chartOptions.series[0].data[0].children[i].hallmarks.includes(params.name)) {
                             indices.push(chartOptions.series[0].data[0].children[i].name)
                         } else if (params.name == "NONE" && chartOptions.series[0].data[0].children[i].hallmarks.length == 0) {
                             indices.push(chartOptions.series[0].data[0].children[i].name)
