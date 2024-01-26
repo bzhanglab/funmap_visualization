@@ -94,11 +94,14 @@
             border-top: 3pt solid white;
             transform: translate(0%, 0%) rotate(-90deg);
             font-family: Arial, Helvetica, sans-serif;
-            /* Rotate the tab */
-            cursor: pointer;
             transition-duration: 0.5s;
             z-index: 1005;
             /* Place above other elements */
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
         }
 
         #pie_chart_container:hover>#pie_chart_grey {
@@ -169,6 +172,18 @@
 
         legendContainer.addEventListener('mouseleave', () => {
             setTimeout(() => {
+                if (legendContainer.matches(':hover') || tabContainer.matches(':hover')) {
+                    return;
+                }
+                legendContainer.style.left = '-22.1%';
+                tabContainer.style.left = '-1.15%';
+            }, 1000); // 1000 milliseconds (1 second) delay
+        });
+        tabContainer.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                if (legendContainer.matches(':hover') || tabContainer.matches(':hover')) {
+                    return;
+                }
                 legendContainer.style.left = '-22.1%';
                 tabContainer.style.left = '-1.15%';
             }, 1000); // 1000 milliseconds (1 second) delay
