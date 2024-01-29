@@ -199,6 +199,7 @@
         </div>
         <div id="search-container" class="side-container">
             <div id="search-area">
+                <h3 style="text-align: center;">Search for Module Containing Gene</h3>
                 <input list="genes" id="gene_search" placeholder="Search for a gene" style="width: 100%; height: 2em;">
                 <datalist id="genes"></datalist>
                 <button id="search_button" style="width: 100%; height: 2em;">Search</button>
@@ -272,6 +273,18 @@
                 searchTabContainer.style.right = '-1.15%';
             }, 1000); // 1000 milliseconds (1 second) delay
         });
+
+        function uncollapse_children(node, valid_names) {
+            if (node.children && node.children.length > 0) {
+                for (let i = 0; i < node.children.length; i++) {
+                    if (valid_names.includes(node.children[i].name)) {
+                        node.children[i].collapsed = false;
+                        node.children[i] = uncollapse_children(node.children[i], valid_names);
+                    }
+                }
+            }
+            return node;
+        }
 
         function toTitleCase(str) {
             return str.replace(
@@ -486,13 +499,19 @@
                         search_button.addEventListener('click', function (e) {
                             let gene = document.getElementById("gene_search").value
                             if (gene in gene_to_module) {
-                                let module = gene_to_module[gene]
-                                console.log(module)
+                                let modules = gene_to_module[gene];
+                                let node = chartOptions.series[0].data[0];
+                                node = uncollapse_children(node, modules);
+                                let newChartOptions = chartOptions;
+                                newChartOptions.series[0].data[0] = node;
+                                chart.setOption(newChartOptions);
                                 chart.dispatchAction({
                                     type: 'highlight',
                                     seriesIndex: 0,
-                                    name: module
+                                    name: modules
                                 });
+
+                                
                             }
                         });
                     })
