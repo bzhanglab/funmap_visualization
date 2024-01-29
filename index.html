@@ -281,12 +281,16 @@
         const searchContainer = document.getElementById('search-container');
         const searchTabContainer = document.getElementById('search-tab-container');
 
+        const initial_timeout = 3000;
+        const legend_timeout = 3000;
+        const search_timeout = 3000;
+
         setTimeout(() => {
             legendContainer.style.left = '-22.2%';
             legendTabContainer.style.left = '-1.15%';
             searchContainer.style.right = '-23.2%';
             searchTabContainer.style.right = '-1.15%';
-        }, 3000);
+        }, initial_timeout);
 
         legendContainer.addEventListener('mouseleave', () => {
             setTimeout(() => {
@@ -295,7 +299,7 @@
                 }
                 legendContainer.style.left = '-22.2%';
                 legendTabContainer.style.left = '-1.15%';
-            }, 1000); // 1000 milliseconds (1 second) delay
+            }, legend_timeout); // 1000 milliseconds (1 second) delay
         });
         legendTabContainer.addEventListener('mouseleave', () => {
             setTimeout(() => {
@@ -304,7 +308,7 @@
                 }
                 legendContainer.style.left = '-22.2%';
                 legendTabContainer.style.left = '-1.15%';
-            }, 1000); // 1000 milliseconds (1 second) delay
+            }, legend_timeout); // 1000 milliseconds (1 second) delay
         });
 
         // New event listener for handling the tab hover
@@ -325,7 +329,7 @@
                 }
                 searchContainer.style.right = '-23.2%';
                 searchTabContainer.style.right = '-1.15%';
-            }, 5000); // 1000 milliseconds (1 second) delay
+            }, search_timeout); // 1000 milliseconds (1 second) delay
         });
 
         searchContainer.addEventListener('mouseleave', () => {
@@ -335,7 +339,7 @@
                 }
                 searchContainer.style.right = '-23.2%';
                 searchTabContainer.style.right = '-1.15%';
-            }, 5000); // 1000 milliseconds (1 second) delay
+            }, search_timeout); // 1000 milliseconds (1 second) delay
         });
 
         function uncollapse_children(node, valid_names) {
