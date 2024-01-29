@@ -7,6 +7,37 @@
     <script src="js/echarts.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css">
+        :root {
+            --unit: 1rem;
+            --unit-2: 2rem;
+            --unit-3: 3rem;
+            --leading: 1.4;
+            --measure: 960px;
+            --measure-min: 288px;
+            --font: -apple-system, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            --font-header: var(--font);
+            --color-body: #1a1a1a;
+            --color-body-light: #626A6E;
+            --color-body-inverted: #fff;
+            --color-select: #b3d4fc;
+            --color-access: #fd0;
+            --color-error: #f00;
+            --color-line: #b1b4b6;
+            --color-light: #505050;
+            --color-very-light: #f3f2f1;
+            --color-primary: #005ea5;
+            --color-primary-hover: #003078;
+            --color-primary-active: #2b8cc4;
+            --color-primary-visited: #4c2c92;
+            --color-secondary: #005a30;
+            --color-secondary-hover: #003E21;
+            --color-secondary-active: #003E21;
+            --color-secondary-visited: #00703c;
+            --color-tertiary: #942514;
+            --color-tertiary-hover: #6F0000;
+            --color-tertiary-active: #6F0000;
+            --color-tertiary-visited: #6F0000;
+        }
         html,
         body {
             height: 100%;
@@ -86,12 +117,13 @@
             top: 5%;
             right: 0;
             padding-right: 1%;
+            padding-left: 1%;
+            padding-bottom: 1%;
         }
 
         .tab-container {
             background: white;
             position: absolute;
-
             /* Adjust the distance from the left side */
             width: fit-content;
             /* Set width for the tab */
@@ -123,9 +155,11 @@
         }
 
         #search-tab-container {
-            top: 10%;
-            right: 20.85%;
-            transform: translate(0%, 0%) rotate(90deg);
+            top: 15%;
+            right: 21.85%;
+            transform: translate(0%, 0%) rotate(-90deg);
+            border-top: 0.1vw solid black;
+            border-bottom: 0.3vw solid white;
         }
 
         #pie_chart_container:hover>#pie_chart_grey {
@@ -158,9 +192,11 @@
             font-weight: bold;
         }
 
-        input {
+        input, output {
             display: inline-block;
             font-size: 1.1875rem;
+            line-height: var(--leading);
+            font-family: var(--font);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             font-weight: 400;
@@ -169,9 +205,35 @@
             height: 2.5rem;
             margin-top: 0;
             padding: 5px;
-            border: 2px solid black;
+            border: 2px solid var(--color-body);
             border-radius: 0;
             appearance: none;
+        }
+        
+        button, input[type="submit"], input[type="button"], input[type="reset"] {
+            width: auto;
+            height: 1.5em;
+            background-color: var(--color-secondary);
+            border: 2px solid transparent;
+            box-shadow: var(--color-body) 0 2px 0 0;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-family: var(--font);
+            font-size: 1.1875rem;
+            font-weight: 400;
+            line-height: 1;
+            margin-bottom: var(--unit-2);
+            margin-top: 0;
+            text-align: center;
+            vertical-align: baseline;
+            -moz-appearance: none;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 8px 10px 7px;
+        }
+        button:hover, input[type="submit"]:hover {
+            background: var(--color-secondary-hover);
         }
     </style>
 </head>
@@ -218,9 +280,9 @@
         const searchTabContainer = document.getElementById('search-tab-container');
 
         setTimeout(() => {
-            legendContainer.style.left = '-22.1%';
+            legendContainer.style.left = '-22.2%';
             legendTabContainer.style.left = '-1.15%';
-            searchContainer.style.right = '-22.1%';
+            searchContainer.style.right = '-23.2%';
             searchTabContainer.style.right = '-1.15%';
         }, 3000);
 
@@ -229,7 +291,7 @@
                 if (legendContainer.matches(':hover') || legendTabContainer.matches(':hover')) {
                     return;
                 }
-                legendContainer.style.left = '-22.1%';
+                legendContainer.style.left = '-22.2%';
                 legendTabContainer.style.left = '-1.15%';
             }, 1000); // 1000 milliseconds (1 second) delay
         });
@@ -238,7 +300,7 @@
                 if (legendContainer.matches(':hover') || legendTabContainer.matches(':hover')) {
                     return;
                 }
-                legendContainer.style.left = '-22.1%';
+                legendContainer.style.left = '-22.2%';
                 legendTabContainer.style.left = '-1.15%';
             }, 1000); // 1000 milliseconds (1 second) delay
         });
@@ -251,7 +313,7 @@
 
         searchTabContainer.addEventListener('mouseenter', () => {
             searchContainer.style.right = '0';
-            searchTabContainer.style.right = '20.85%';
+            searchTabContainer.style.right = '21.85%';
         });
 
         searchTabContainer.addEventListener('mouseleave', () => {
@@ -259,9 +321,9 @@
                 if (searchContainer.matches(':hover') || searchTabContainer.matches(':hover')) {
                     return;
                 }
-                searchContainer.style.right = '-22.1%';
+                searchContainer.style.right = '-23.2%';
                 searchTabContainer.style.right = '-1.15%';
-            }, 1000); // 1000 milliseconds (1 second) delay
+            }, 5000); // 1000 milliseconds (1 second) delay
         });
 
         searchContainer.addEventListener('mouseleave', () => {
@@ -269,21 +331,27 @@
                 if (searchContainer.matches(':hover') || searchTabContainer.matches(':hover')) {
                     return;
                 }
-                searchContainer.style.right = '-22.1%';
+                searchContainer.style.right = '-23.2%';
                 searchTabContainer.style.right = '-1.15%';
-            }, 1000); // 1000 milliseconds (1 second) delay
+            }, 5000); // 1000 milliseconds (1 second) delay
         });
 
         function uncollapse_children(node, valid_names) {
+            let collapseParent = valid_names.includes(node.name);
             if (node.children && node.children.length > 0) {
+                let collapse_this_node = false;
                 for (let i = 0; i < node.children.length; i++) {
                     if (valid_names.includes(node.children[i].name)) {
-                        node.children[i].collapsed = false;
-                        node.children[i] = uncollapse_children(node.children[i], valid_names);
+                        x = uncollapse_children(node.children[i], valid_names);
+                        node.children[i] = x[0];
+                        collapse_this_node = collapse_this_node || x[1];
                     }
                 }
+                if (collapse_this_node) {
+                    node.collapsed = false;
+                }
             }
-            return node;
+            return [node, collapseParent];
         }
 
         function toTitleCase(str) {
@@ -501,7 +569,7 @@
                             if (gene in gene_to_module) {
                                 let modules = gene_to_module[gene];
                                 let node = chartOptions.series[0].data[0];
-                                node = uncollapse_children(node, modules);
+                                node = uncollapse_children(node, modules)[0];
                                 let newChartOptions = chartOptions;
                                 newChartOptions.series[0].data[0] = node;
                                 chart.setOption(newChartOptions);
