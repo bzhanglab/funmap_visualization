@@ -53,16 +53,13 @@
             background-color: rgba(140, 140, 140, 0.25);
         }
 
-        #legend-container {
+        .side-container {
             position: absolute;
-            top: 0;
-            left: 0;
             background: white;
             height: fit-content;
             border: inherit;
             border-radius: inherit;
             width: 21%;
-            padding-left: 1%;
             padding-top: 1%;
             z-index: 1001;
             transition-duration: 0.5s;
@@ -78,11 +75,23 @@
             user-select: none;
         }
 
-        #tab-container {
+
+        #legend-container {
+            top: 0;
+            left: 0;
+            padding-left: 1%;
+        }
+
+        #search-container {
+            top: 5%;
+            right: 0;
+            padding-right: 1%;
+        }
+
+        .tab-container {
             background: white;
             position: absolute;
-            top: 15%;
-            left: 20.85%;
+
             /* Adjust the distance from the left side */
             width: fit-content;
             /* Set width for the tab */
@@ -96,7 +105,6 @@
             align-content: center;
             border: 0.1vw solid black;
             border-top: 0.3vw solid white;
-            transform: translate(0%, 0%) rotate(-90deg);
             font-family: Arial, Helvetica, sans-serif;
             transition-duration: 0.5s;
             z-index: 1005;
@@ -106,6 +114,18 @@
             -webkit-user-select: none;
             -o-user-select: none;
             user-select: none;
+        }
+
+        #legend-tab-container {
+            top: 15%;
+            left: 20.85%;
+            transform: translate(0%, 0%) rotate(-90deg);
+        }
+
+        #search-tab-container {
+            top: 10%;
+            right: 20.85%;
+            transform: translate(0%, 0%) rotate(90deg);
         }
 
         #pie_chart_container:hover>#pie_chart_grey {
@@ -137,14 +157,31 @@
             color: #000;
             font-weight: bold;
         }
+
+        input {
+            display: inline-block;
+            font-size: 1.1875rem;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-weight: 400;
+            box-sizing: border-box;
+            width: 100%;
+            height: 2.5rem;
+            margin-top: 0;
+            padding: 5px;
+            border: 2px solid black;
+            border-radius: 0;
+            appearance: none;
+        }
     </style>
 </head>
 
 <body>
     <div id="outer">
         <div id="chart" style="width: 100%; height: 100%;"></div>
-        <div id="tab-container">Legend</div>
-        <div id="legend-container">
+        <div id="legend-tab-container" class="tab-container">Legend</div>
+        <div id="search-tab-container" class="tab-container">Search</div>
+        <div id="legend-container" class="side-container">
             <div id="legend">
                 <!-- Content of the drawer -->
                 <p>Visualize and interact with the hierarchical structure of <a
@@ -157,6 +194,14 @@
                     <li><b>Fill Color</b> - Signed log10 meta-p value</li>
                     <li><b>Edge Color</b> - Cancer hallmark</li>
                 </ul>
+
+            </div>
+        </div>
+        <div id="search-container" class="side-container">
+            <div id="search-area">
+                <input list="genes" id="gene_search" placeholder="Search for a gene" style="width: 100%; height: 2em;">
+                <datalist id="genes"></datalist>
+                <button id="search_button" style="width: 100%; height: 2em;">Search</button>
             </div>
         </div>
         <div id="pie_chart_container">
@@ -167,36 +212,65 @@
     <script>
 
         const legendContainer = document.getElementById('legend-container');
-        const tabContainer = document.getElementById('tab-container');
+        const legendTabContainer = document.getElementById('legend-tab-container');
+        const searchContainer = document.getElementById('search-container');
+        const searchTabContainer = document.getElementById('search-tab-container');
 
         setTimeout(() => {
             legendContainer.style.left = '-22.1%';
-            tabContainer.style.left = '-1.15%';
+            legendTabContainer.style.left = '-1.15%';
+            searchContainer.style.right = '-22.1%';
+            searchTabContainer.style.right = '-1.15%';
         }, 3000);
 
         legendContainer.addEventListener('mouseleave', () => {
             setTimeout(() => {
-                if (legendContainer.matches(':hover') || tabContainer.matches(':hover')) {
+                if (legendContainer.matches(':hover') || legendTabContainer.matches(':hover')) {
                     return;
                 }
                 legendContainer.style.left = '-22.1%';
-                tabContainer.style.left = '-1.15%';
+                legendTabContainer.style.left = '-1.15%';
             }, 1000); // 1000 milliseconds (1 second) delay
         });
-        tabContainer.addEventListener('mouseleave', () => {
+        legendTabContainer.addEventListener('mouseleave', () => {
             setTimeout(() => {
-                if (legendContainer.matches(':hover') || tabContainer.matches(':hover')) {
+                if (legendContainer.matches(':hover') || legendTabContainer.matches(':hover')) {
                     return;
                 }
                 legendContainer.style.left = '-22.1%';
-                tabContainer.style.left = '-1.15%';
+                legendTabContainer.style.left = '-1.15%';
             }, 1000); // 1000 milliseconds (1 second) delay
         });
 
         // New event listener for handling the tab hover
-        tabContainer.addEventListener('mouseenter', () => {
+        legendTabContainer.addEventListener('mouseenter', () => {
             legendContainer.style.left = '0';
-            tabContainer.style.left = '20.85%';
+            legendTabContainer.style.left = '20.85%';
+        });
+
+        searchTabContainer.addEventListener('mouseenter', () => {
+            searchContainer.style.right = '0';
+            searchTabContainer.style.right = '20.85%';
+        });
+
+        searchTabContainer.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                if (searchContainer.matches(':hover') || searchTabContainer.matches(':hover')) {
+                    return;
+                }
+                searchContainer.style.right = '-22.1%';
+                searchTabContainer.style.right = '-1.15%';
+            }, 1000); // 1000 milliseconds (1 second) delay
+        });
+
+        searchContainer.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                if (searchContainer.matches(':hover') || searchTabContainer.matches(':hover')) {
+                    return;
+                }
+                searchContainer.style.right = '-22.1%';
+                searchTabContainer.style.right = '-1.15%';
+            }, 1000); // 1000 milliseconds (1 second) delay
         });
 
         function toTitleCase(str) {
@@ -207,199 +281,223 @@
                 }
             );
         }
-        fetch("data/go.json").then((res) => res.json()).then((go_data) => {
-            fetch("data/funmap.json").then((res) => res.json()).then((chartData) => {
-                var chartOptions = {
-                    title: {
-                        text: 'FunMap Hierarchical Organization',
-                        left: 'center',
-                        textStyle: {
-                            fontSize: 30,
-                            fontWeight: 'bolder',
-                            color: '#333'
-                        }
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        triggerOn: 'mousemove',
-                        formatter: function (params, ticket, callback) {
-                            node_go = go_data[params.name]
-                            let hallmark_string = ""
-                            if ("hallmarks" in params.data) {
-                                for (let i = 0; i < params.data.hallmarks.length; i++) {
-                                    hallmark_string += toTitleCase(params.data.hallmarks[i]) + ", "
+
+        fetch("data/genes.json").then((res) => res.json()).then((gene_data) => {
+            genelist = document.getElementById("genes")
+            for (let i = 0; i < gene_data.length; i++) {
+                let option = document.createElement("option")
+                option.value = gene_data[i]
+                genelist.appendChild(option)
+            }
+        }).then(() => {
+            fetch("data/gene_to_module.json").then(res => res.json()).then(gene_to_module => {
+                fetch("data/go.json").then((res) => res.json()).then((go_data) => {
+                    fetch("data/funmap.json").then((res) => res.json()).then((chartData) => {
+                        var chartOptions = {
+                            title: {
+                                text: 'FunMap Hierarchical Organization',
+                                left: 'center',
+                                textStyle: {
+                                    fontSize: 30,
+                                    fontWeight: 'bolder',
+                                    color: '#333'
                                 }
-                                hallmark_string = hallmark_string.slice(0, -2)
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                triggerOn: 'mousemove',
+                                formatter: function (params, ticket, callback) {
+                                    node_go = go_data[params.name]
+                                    let hallmark_string = ""
+                                    if ("hallmarks" in params.data) {
+                                        for (let i = 0; i < params.data.hallmarks.length; i++) {
+                                            hallmark_string += toTitleCase(params.data.hallmarks[i]) + ", "
+                                        }
+                                        hallmark_string = hallmark_string.slice(0, -2)
+                                    }
+
+                                    if (hallmark_string == "") {
+                                        hallmark_string = "No Hallmarks"
+                                    }
+                                    var content = `<h1 style="text-align:center;">${params.name}</h1><h2>Cancer Hallmarks: ${hallmark_string}</h2><br><h3 style="text-align:center;">Top GO Terms</h3><table style="width: 100%"><thead><tr><th>GO Category</th><th>GO ID</th><th>Name</th><th>p-Value</th></tr></thead><tbody><tr><td>Biological Process</td><td>${node_go['gobp']['id']}</td><td>${node_go['gobp']['name']}</td><td>${node_go['gobp']['p']}</td></tr><tr><td>Cellular Component</td><td>${node_go['gocc']['id']}</td><td>${node_go['gocc']['name']}</td><td>${node_go['gocc']['p']}</td></tr><tr><td>Molecular Function</td><td>${node_go['gomf']['id']}</td><td>${node_go['gomf']['name']}</td><td>${node_go['gomf']['p']}</td></tr></tbody></table>`;
+                                    let el = document.createElement('div');
+                                    el.innerHTML = content;
+                                    return el;
+                                },
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    restore: {},
+                                    saveAsImage: {},
+                                }
+                            },
+                            series: [
+                                {
+                                    type: 'tree',
+                                    roam: true,
+                                    name: 'FunMap',
+                                    data: [chartData],
+                                    top: '10%',
+                                    bottom: '10%',
+                                    left: '10%',
+                                    right: '10%',
+                                    layout: 'radial',
+                                    symbol: (value, params) => {
+                                        node = params.data
+                                        if (node.children && node.children.length > 0 && params.collapsed) {
+                                            return "diamond"
+                                        } else {
+                                            return "circle"
+                                        }
+                                    },
+
+                                    symbolSize: 20,
+                                    initialTreeDepth: 1,
+                                    label: {
+                                        position: 'top',
+                                        verticalAlign: 'middle',
+                                        align: 'right',
+                                        fontSize: 12,
+                                    },
+                                    leaves: {
+                                        label: {
+                                            position: 'bottom',
+                                            verticalAlign: 'middle',
+                                            align: 'left'
+                                        }
+                                    },
+                                    animationDuration: 550,
+                                    animationDurationUpdate: 750,
+                                    lineStyle: {
+                                        width: 7,
+                                        color: "yellow"
+                                    },
+                                    itemStyle: {
+                                        borderWidth: 1,
+                                        color: "yellow",
+                                        borderColor: "black"
+                                    },
+                                    emphasis: {
+                                        focus: 'ancestor'
+                                    },
+                                }
+                            ],
+                            visualMap: {
+                                type: 'continuous',
+                                min: -165,
+                                max: 165,
+                                seriesIndex: 0,
+                                title: {
+                                    text: 'Signed log10 meta-p',
+                                    left: 'center',
+                                    top: 'bottom'
+                                },
+                                text: ["Signed log10 meta-p\n\nHigher in Tumor compared to Normal", "Lower in Tumor compared to Normal"],
+                                precision: 3,
+                                inRange: {
+                                    color: ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#f7f7f7', '#d1e5f0', '#92c5de', '#4393c3', '#2166ac', '#053061'].reverse(),
+                                }
+                            },
+                        };
+
+                        // Initialize the chart
+                        var chart = echarts.init(document.getElementById('chart'));
+                        chart.setOption(chartOptions);
+                        window.addEventListener('resize', function () {
+                            chart.resize();
+                        });
+
+                        var pieChartDom = document.getElementById('pie_chart');
+                        var pie_chart = echarts.init(pieChartDom);
+                        var option;
+
+                        option = {
+                            title: {
+                                text: 'Hallmark Key',
+                                left: 'center'
+                            },
+                            series: [
+                                {
+                                    animationDuration: 0,
+                                    animationDurationUpdate: 0,
+                                    name: 'Hallmark Key',
+                                    type: 'pie',
+                                    radius: ['40%', '70%'],
+                                    avoidLabelOverlap: false,
+                                    itemStyle: {
+                                        borderRadius: 10,
+                                        borderColor: '#fff',
+                                        borderWidth: 2
+                                    },
+                                    label: {
+                                        show: false,
+                                        position: 'center'
+                                    },
+                                    emphasis: {
+                                        animationDuration: 50,
+                                        label: {
+                                            show: true,
+                                            width: 200,
+                                            fontSize: 18,
+                                            fontWeight: 'bold',
+                                            overflow: "break",
+                                        }
+                                    },
+                                    labelLine: {
+                                        show: false
+                                    },
+                                    data: [{ "name": "EVADING GROWTH SUPPRESSORS", "value": 1, "itemStyle": { "color": "rgba(96, 50, 2, 0.55)" } }, { "name": "AVOIDING IMMUNE DESTRUCTION", "value": 1, "itemStyle": { "color": "rgba(194, 0, 126, 0.55)" } }, { "name": "ENABLING REPLICATIVE IMMORTALITY", "value": 1, "itemStyle": { "color": "rgba(13, 104, 161, 0.55)" } }, { "name": "TUMOR PROMOTING INFLAMMATION", "value": 1, "itemStyle": { "color": "rgba(213, 101, 23, 0.55)" } }, { "name": "ACTIVATING INVASION AND METASTASIS", "value": 1, "itemStyle": { "color": "rgba(25, 23, 24, 0.55)" } }, { "name": "INDUCING ANGIOGENESIS", "value": 1, "itemStyle": { "color": "rgba(232, 35, 40, 0.55)" } }, { "name": "GENOME INSTABILITY AND MUTATION", "value": 1, "itemStyle": { "color": "rgba(21, 41, 132, 0.55)" } }, { "name": "RESISTING CELL DEATH", "value": 1, "itemStyle": { "color": "rgba(112, 125, 134, 0.55)" } }, { "name": "DEREGULATING CELLULAR ENERGETICS", "value": 1, "itemStyle": { "color": "rgba(106, 42, 133, 0.55)" } }, { "name": "SUSTAINING PROLIFERATIVE SIGNALING", "value": 1, "itemStyle": { "color": "rgba(21, 143, 72, 0.55)" } }, { "name": "NONE", "value": 1, "itemStyle": { "color": "rgba(220, 211, 182, 0.55)" } }]
+                                }
+                            ]
+                        };
+
+                        option && pie_chart.setOption(option);
+                        function resize_pie_chart() {
+                            pie_chart.resize({
+                                width: pieChartDom.clientWidth,
+                                height: pieChartDom.clientHeight,
+                                animation: {
+                                    duration: 500
+                                }
+                            });
+                            setTimeout(() => {
+                                pie_chart.clear();
+                                pie_chart.setOption(option, true);
+                            }, 1)
+                        }
+                        new ResizeObserver(resize_pie_chart).observe(pieChartDom)
+                        pie_chart.on('mouseover', function (params) {
+                            let indices = [];
+                            for (let i = 0; i < chartOptions.series[0].data[0].children.length; i++) {
+                                if (chartOptions.series[0].data[0].children[i].hallmarks[0] == params.name) {
+                                    indices.push(chartOptions.series[0].data[0].children[i].name)
+                                } else if (params.name == "NONE" && chartOptions.series[0].data[0].children[i].hallmarks.length == 0) {
+                                    indices.push(chartOptions.series[0].data[0].children[i].name)
+                                }
                             }
-
-                            if (hallmark_string == "") {
-                                hallmark_string = "No Hallmarks"
+                            chart.dispatchAction({
+                                type: 'highlight',
+                                seriesIndex: 0,
+                                name: indices
+                            });
+                        });
+                        let search_button = document.getElementById("search_button")
+                        search_button.addEventListener('click', function (e) {
+                            let gene = document.getElementById("gene_search").value
+                            if (gene in gene_to_module) {
+                                let module = gene_to_module[gene]
+                                console.log(module)
+                                chart.dispatchAction({
+                                    type: 'highlight',
+                                    seriesIndex: 0,
+                                    name: module
+                                });
                             }
-                            var content = `<h1 style="text-align:center;">${params.name}</h1><h2>Cancer Hallmarks: ${hallmark_string}</h2><br><h3 style="text-align:center;">Top GO Terms</h3><table style="width: 100%"><thead><tr><th>GO Category</th><th>GO ID</th><th>Name</th><th>p-Value</th></tr></thead><tbody><tr><td>Biological Process</td><td>${node_go['gobp']['id']}</td><td>${node_go['gobp']['name']}</td><td>${node_go['gobp']['p']}</td></tr><tr><td>Cellular Component</td><td>${node_go['gocc']['id']}</td><td>${node_go['gocc']['name']}</td><td>${node_go['gocc']['p']}</td></tr><tr><td>Molecular Function</td><td>${node_go['gomf']['id']}</td><td>${node_go['gomf']['name']}</td><td>${node_go['gomf']['p']}</td></tr></tbody></table>`;
-                            let el = document.createElement('div');
-                            el.innerHTML = content;
-                            return el;
-                        },
-                    },
-                    toolbox: {
-                        show: true,
-                        feature: {
-                            restore: {},
-                            saveAsImage: {},
-                        }
-                    },
-                    series: [
-                        {
-                            type: 'tree',
-                            roam: true,
-                            name: 'FunMap',
-                            data: [chartData],
-                            top: '10%',
-                            bottom: '10%',
-                            left: '10%',
-                            right: '10%',
-                            layout: 'radial',
-                            symbol: (value, params) => {
-                                node = params.data
-                                if (node.children && node.children.length > 0 && params.collapsed) {
-                                    return "diamond"
-                                } else {
-                                    return "circle"
-                                }
-                            },
-
-                            symbolSize: 20,
-                            initialTreeDepth: 1,
-                            label: {
-                                position: 'top',
-                                verticalAlign: 'middle',
-                                align: 'right',
-                                fontSize: 12,
-                            },
-                            leaves: {
-                                label: {
-                                    position: 'bottom',
-                                    verticalAlign: 'middle',
-                                    align: 'left'
-                                }
-                            },
-                            animationDuration: 550,
-                            animationDurationUpdate: 750,
-                            lineStyle: {
-                                width: 7,
-                                color: "yellow"
-                            },
-                            itemStyle: {
-                                borderWidth: 1,
-                                color: "yellow",
-                                borderColor: "black"
-                            },
-                            emphasis: {
-                                focus: 'ancestor'
-                            },
-                        }
-                    ],
-                    visualMap: {
-                        type: 'continuous',
-                        min: -165,
-                        max: 165,
-                        seriesIndex: 0,
-                        title: {
-                            text: 'Signed log10 meta-p',
-                            left: 'center',
-                            top: 'bottom'
-                        },
-                        text: ["Signed log10 meta-p\n\nHigher in Tumor compared to Normal", "Lower in Tumor compared to Normal"],
-                        precision: 3,
-                        inRange: {
-                            color: ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#f7f7f7', '#d1e5f0', '#92c5de', '#4393c3', '#2166ac', '#053061'].reverse(),
-                        }
-                    },
-                };
-
-                // Initialize the chart
-                var chart = echarts.init(document.getElementById('chart'));
-                chart.setOption(chartOptions);
-                window.addEventListener('resize', function () {
-                    chart.resize();
-                });
-
-                var pieChartDom = document.getElementById('pie_chart');
-                var pie_chart = echarts.init(pieChartDom);
-                var option;
-
-                option = {
-                    title: {
-                        text: 'Hallmark Key',
-                        left: 'center'
-                    },
-                    series: [
-                        {
-                            animationDuration: 0,
-                            animationDurationUpdate: 0,
-                            name: 'Hallmark Key',
-                            type: 'pie',
-                            radius: ['40%', '70%'],
-                            avoidLabelOverlap: false,
-                            itemStyle: {
-                                borderRadius: 10,
-                                borderColor: '#fff',
-                                borderWidth: 2
-                            },
-                            label: {
-                                show: false,
-                                position: 'center'
-                            },
-                            emphasis: {
-                                animationDuration: 50,
-                                label: {
-                                    show: true,
-                                    width: 200,
-                                    fontSize: 18,
-                                    fontWeight: 'bold',
-                                    overflow: "break",
-                                }
-                            },
-                            labelLine: {
-                                show: false
-                            },
-                            data: [{ "name": "EVADING GROWTH SUPPRESSORS", "value": 1, "itemStyle": { "color": "rgba(96, 50, 2, 0.55)" } }, { "name": "AVOIDING IMMUNE DESTRUCTION", "value": 1, "itemStyle": { "color": "rgba(194, 0, 126, 0.55)" } }, { "name": "ENABLING REPLICATIVE IMMORTALITY", "value": 1, "itemStyle": { "color": "rgba(13, 104, 161, 0.55)" } }, { "name": "TUMOR PROMOTING INFLAMMATION", "value": 1, "itemStyle": { "color": "rgba(213, 101, 23, 0.55)" } }, { "name": "ACTIVATING INVASION AND METASTASIS", "value": 1, "itemStyle": { "color": "rgba(25, 23, 24, 0.55)" } }, { "name": "INDUCING ANGIOGENESIS", "value": 1, "itemStyle": { "color": "rgba(232, 35, 40, 0.55)" } }, { "name": "GENOME INSTABILITY AND MUTATION", "value": 1, "itemStyle": { "color": "rgba(21, 41, 132, 0.55)" } }, { "name": "RESISTING CELL DEATH", "value": 1, "itemStyle": { "color": "rgba(112, 125, 134, 0.55)" } }, { "name": "DEREGULATING CELLULAR ENERGETICS", "value": 1, "itemStyle": { "color": "rgba(106, 42, 133, 0.55)" } }, { "name": "SUSTAINING PROLIFERATIVE SIGNALING", "value": 1, "itemStyle": { "color": "rgba(21, 143, 72, 0.55)" } }, { "name": "NONE", "value": 1, "itemStyle": { "color": "rgba(220, 211, 182, 0.55)" } }]
-                        }
-                    ]
-                };
-
-                option && pie_chart.setOption(option);
-                function resize_pie_chart() {
-                    pie_chart.resize({
-                        width: pieChartDom.clientWidth,
-                        height: pieChartDom.clientHeight,
-                        animation: {
-                            duration: 500
-                        }
-                    });
-                    setTimeout(() => {
-                        pie_chart.clear();
-                        pie_chart.setOption(option, true);
-                    }, 1)
-                }
-                new ResizeObserver(resize_pie_chart).observe(pieChartDom)
-                pie_chart.on('mouseover', function (params) {
-                    let indices = [];
-                    for (let i = 0; i < chartOptions.series[0].data[0].children.length; i++) {
-                        if (chartOptions.series[0].data[0].children[i].hallmarks[0] == params.name) {
-                            indices.push(chartOptions.series[0].data[0].children[i].name)
-                        } else if (params.name == "NONE" && chartOptions.series[0].data[0].children[i].hallmarks.length == 0) {
-                            indices.push(chartOptions.series[0].data[0].children[i].name)
-                        }
-                    }
-                    chart.dispatchAction({
-                        type: 'highlight',
-                        seriesIndex: 0,
-                        name: indices
-                    });
-                });
-
-            })
+                        });
+                    })
+                })
+            });
         });
     </script>
 </body>
