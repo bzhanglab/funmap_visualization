@@ -386,7 +386,7 @@
                 pie_chart.on('mouseover', function (params) {
                     let indices = [];
                     for (let i = 0; i < chartOptions.series[0].data[0].children.length; i++) {
-                        if (chartOptions.series[0].data[0].children[i].hallmarks.includes(params.name)) {
+                        if (chartOptions.series[0].data[0].children[i].hallmarks[0] == params.name) {
                             indices.push(chartOptions.series[0].data[0].children[i].name)
                         } else if (params.name == "NONE" && chartOptions.series[0].data[0].children[i].hallmarks.length == 0) {
                             indices.push(chartOptions.series[0].data[0].children[i].name)
