@@ -323,13 +323,13 @@
         const dag_timeout = 3000;
         let has_shown_dag = false;
         dagContainer.style.right = '-35.2%'; // Hide initially
+        dagTabContainer.style.right = '-1.15%';
+        let timeout_id = 0;
         setTimeout(() => {
             legendContainer.style.left = '-22.2%';
             legendTabContainer.style.left = '-1.15%';
             searchContainer.style.right = '-23.2%';
             searchTabContainer.style.right = '-1.15%';
-            
-            dagTabContainer.style.right = '-1.15%';
         }, initial_timeout);
 
         registerMouseEvents = function (container, tab, timeout, direction, closed_container_pos, closed_tab_pos, open_container_pos, open_tab_pos) {
@@ -343,13 +343,16 @@
                 }, timeout);
             });
             tab.addEventListener('mouseleave', () => {
-                setTimeout(() => {
+                setTimeout((old_timeout_id) => {
+                    if (container.id == "dag-container" && old_timeout_id != timeout_id) {
+                        return;
+                    }
                     if (container.matches(':hover') || tab.matches(':hover')) {
                         return;
                     }
                     container.style[direction] = closed_container_pos;
                     tab.style[direction] = closed_tab_pos;
-                }, timeout);
+                }, timeout, timeout_id);
             });
 
             // New event listener for handling the tab hover
@@ -618,15 +621,20 @@
                                     if (!!result) {
                                         if (!has_shown_dag) {
                                             dagTabContainer.style.display = "block";
+                                            dagContainer.style.display = "block";
                                             has_shown_dag = true;
                                         }
                                         dagTabContainer.dispatchEvent(new Event('mouseenter'));
                                         setTimeout(() => {
+                                            timeout_id += 1;
                                             dagTabContainer.dispatchEvent(new Event('mouseleave'));
-                                        }, 3000);
+                                        }, 1000);
                                     }
                                     else {
                                         dagTabContainer.style.display = "none";
+                                        dagContainer.style.display = "none";
+                                        dagContainer.style.right = '-35.2%'; // Hide
+                                        dagTabContainer.style.right = '-1.15%';
                                         has_shown_dag = false;
                                     }
                                 });
