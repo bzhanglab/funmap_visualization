@@ -1,33 +1,32 @@
 
 function create_dag(clique_type, clique_id, element_id = 'dag') {
-
-    
-
-    fetch('data/' + clique_type + '/' + clique_id + '.json')
+    return fetch('data/' + clique_type + '/' + clique_id + '.json')
         .then(response => response.json())
         .then(clique_data => {
-            if (clique_data.nodes.length > 1000) {
-                alert("Too many nodes to display");
-                return;
+            if (clique_data.nodes.length > 50) {
+                return false;
             }
 
             function autoFontSize() {
                 let width = document.getElementById(element_id).offsetWidth;
                 let height = document.getElementById(element_id).offsetHeight;
-                let newFontSize = Math.round(Math.sqrt(width * width  + height * height) / (10 * Math.log(clique_data.nodes.length)));
-                return newFontSize;
+                let new_size = Math.round(Math.sqrt(width * width  + height * height) / (40 + Math.log(clique_data.nodes.length)));
+                new_size = Math.min(new_size, 20);
+                return new_size;
             };
             function autoSymbolSize() {
                 let width = document.getElementById(element_id).offsetWidth;
                 let height = document.getElementById(element_id).offsetHeight;
-                let newFontSize = Math.round(Math.sqrt(width * width  + height * height)/ (5 * Math.log(clique_data.nodes.length)));
-                return newFontSize;
+                let new_size = Math.round(Math.sqrt(width * width  + height * height)/ (12 + Math.log(clique_data.nodes.length)));
+                new_size = Math.min(new_size, 60);
+                return new_size;
             };
             function autoEdgeLength() {
                 let width = document.getElementById(element_id).offsetWidth;
                 let height = document.getElementById(element_id).offsetHeight;
-                let newFontSize = Math.round(Math.sqrt(width * width  + height * height) / (1 * Math.log(clique_data.nodes.length)));
-                return newFontSize;
+                let new_size = Math.round(Math.sqrt(width * width  + height * height) / (0.75 + Math.log(clique_data.nodes.length)));
+                new_size = Math.min(new_size, 300);
+                return new_size;
             };
 
 
@@ -111,5 +110,27 @@ function create_dag(clique_type, clique_id, element_id = 'dag') {
                 });
             });
             return myChart;
+        });
+}
+
+function update_dag(chart, clique_type, clique_id) {
+    return fetch('data/' + clique_type + '/' + clique_id + '.json')
+        .then(response => response.json())
+        .then(clique_data => {
+            if (clique_data.nodes.length > 50) {
+                return false;
+            }
+            chart.setOption({
+                title: {
+                    text: clique_id,
+                },
+                series: [
+                    {
+                        nodes: clique_data.nodes,
+                        links: clique_data.edges
+                    }
+                ]
+            });
+            return chart;
         });
 }
