@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>FunMap Hierarchical Organization</title>
     <script src="js/echarts.min.js"></script>
+    <script src="js/dag.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css">
         :root {
@@ -271,69 +272,7 @@
                 clique_type = "dense_modules"
             }
         }
-        fetch('data/' + clique_type + '/' + clique_id + '.json')
-            .then(response => response.json())
-            .then(clique_data => {
-                if (clique_data.nodes.length > 1000) {
-                    alert("Too many nodes to display");
-                    return;
-                }
-                var chartDom = document.getElementById('dag');
-                var myChart = echarts.init(chartDom);
-                var option;
-
-                option = {
-                    tooltip: {
-                        trigger: 'item',
-                        triggerOn: 'mousemove',
-                        formatter: "{b}",
-                        backgroundColor: '#F6F8FC',
-                        borderColor: '#8C8D8E',
-                        borderWidth: 1,
-                        padding: [3, 3, 3, 3],
-                        textStyle: {
-                            color: '#4C5058',
-                            fontSize: 18
-                        }
-                    },
-                    series: [
-                        {
-                            type: 'graph',
-                            name: "Clique " + clique_id,
-                            draggable: clique_data.nodes.length < 100,
-                            layout: 'force',
-                            nodes: clique_data.nodes,
-                            links: clique_data.edges,
-                            coordinateSystem: null,
-                            roam: true,
-                            symbolSize: clique_data.nodes.length < 20 ? 70 : 50,
-                            label: {
-                                show: true,
-                                position: 'inside',
-                                fontSize: 18,
-                                padding: [3, 3, 3, 3],
-                                verticalAlign: "middle",
-                                color: '#4C5058',
-                                backgroundColor: '#F6F8FC',
-                                borderColor: '#8C8D8E',
-                                borderWidth: 1,
-                                borderRadius: 4,
-                                
-                            },
-                            force: {
-                                repulsion: 500,
-                                edgeLength: 500,
-                                friction: 0.05
-                            },
-                            lineStyle: {
-                                width: clique_data.edges.length < 100 ? 0.5 : 0.25
-                            }
-                        }
-                    ]
-                };
-
-                option && myChart.setOption(option);
-            });
+        dag_chart = create_dag(clique_type, clique_id, "dag");
     </script>
 </body>
 

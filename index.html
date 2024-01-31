@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>FunMap Hierarchical Organization</title>
     <script src="js/echarts.min.js"></script>
+    <script src="js/dag.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style type="text/css">
         :root {
@@ -38,6 +39,7 @@
             --color-tertiary-active: #6F0000;
             --color-tertiary-visited: #6F0000;
         }
+
         html,
         body {
             height: 100%;
@@ -121,6 +123,14 @@
             padding-bottom: 1%;
         }
 
+        #dag-container {
+            top: 25%;
+            right: 0;
+            padding-right: 1%;
+            padding-left: 1%;
+            padding-bottom: 1%;
+        }
+
         .tab-container {
             background: white;
             position: absolute;
@@ -131,7 +141,7 @@
             /* Set height for the tab */
             text-align: center;
             padding: 0.5%;
-            
+
             font-size: 1em;
             font-size: 1vw;
             align-content: center;
@@ -159,6 +169,15 @@
 
         #search-tab-container {
             top: 15%;
+            right: 21.85%;
+            padding-bottom: 0.2%;
+            transform: translate(0%, 0%) rotate(-90deg);
+            border-top: 0.1vw solid black;
+            border-bottom: 0.3vw solid white;
+        }
+
+        #dag-tab-container {
+            top: 35%;
             right: 21.85%;
             padding-bottom: 0.2%;
             transform: translate(0%, 0%) rotate(-90deg);
@@ -196,7 +215,8 @@
             font-weight: bold;
         }
 
-        input, output {
+        input,
+        output {
             display: inline-block;
             font-size: 1em;
             font-size: 1vw;
@@ -214,8 +234,11 @@
             border-radius: 0;
             appearance: none;
         }
-        
-        button, input[type="submit"], input[type="button"], input[type="reset"] {
+
+        button,
+        input[type="submit"],
+        input[type="button"],
+        input[type="reset"] {
             width: auto;
             height: 1.5em;
             background-color: var(--color-secondary);
@@ -238,7 +261,9 @@
             -moz-osx-font-smoothing: grayscale;
             padding: 1%;
         }
-        button:hover, input[type="submit"]:hover {
+
+        button:hover,
+        input[type="submit"]:hover {
             background: var(--color-secondary-hover);
         }
     </style>
@@ -249,6 +274,7 @@
         <div id="chart" style="width: 100%; height: 100%;"></div>
         <div id="legend-tab-container" class="tab-container">Legend</div>
         <div id="search-tab-container" class="tab-container">Search</div>
+        <div id="dag-tab-container" class="tab-container">Graph</div>
         <div id="legend-container" class="side-container">
             <div id="legend">
                 <!-- Content of the drawer -->
@@ -273,6 +299,11 @@
                 <button id="search_button" style="width: 100%; height: 2em;">Search</button>
             </div>
         </div>
+        <div id="dag-container" class="side-container">
+            <div id="dag-area">
+                <div id="dag" style="width: 100%; height: 300px;"></div>
+            </div>
+        </div>
         <div id="pie_chart_container">
             <div id="pie_chart_grey" style="width: 100%; height: 100%;"></div>
             <div id="pie_chart" style="width: 100%; height: 100%;"></div>
@@ -284,67 +315,53 @@
         const legendTabContainer = document.getElementById('legend-tab-container');
         const searchContainer = document.getElementById('search-container');
         const searchTabContainer = document.getElementById('search-tab-container');
+        const dagContainer = document.getElementById('dag-container');
+        const dagTabContainer = document.getElementById('dag-tab-container');
 
         const initial_timeout = 3000;
         const legend_timeout = 3000;
         const search_timeout = 3000;
+        const dag_timeout = 3000;
 
         setTimeout(() => {
             legendContainer.style.left = '-22.2%';
             legendTabContainer.style.left = '-1.15%';
             searchContainer.style.right = '-23.2%';
             searchTabContainer.style.right = '-1.15%';
+            dagContainer.style.right = '-23.2%';
+            dagTabContainer.style.right = '-1.15%';
         }, initial_timeout);
 
-        legendContainer.addEventListener('mouseleave', () => {
-            setTimeout(() => {
-                if (legendContainer.matches(':hover') || legendTabContainer.matches(':hover')) {
-                    return;
-                }
-                legendContainer.style.left = '-22.2%';
-                legendTabContainer.style.left = '-1.15%';
-            }, legend_timeout); // 1000 milliseconds (1 second) delay
-        });
-        legendTabContainer.addEventListener('mouseleave', () => {
-            setTimeout(() => {
-                if (legendContainer.matches(':hover') || legendTabContainer.matches(':hover')) {
-                    return;
-                }
-                legendContainer.style.left = '-22.2%';
-                legendTabContainer.style.left = '-1.15%';
-            }, legend_timeout); // 1000 milliseconds (1 second) delay
-        });
+        registerMouseEvents = function (container, tab, timeout, direction, closed_container_pos, closed_tab_pos, open_container_pos, open_tab_pos) {
+            container.addEventListener('mouseleave', () => {
+                setTimeout(() => {
+                    if (container.matches(':hover') || tab.matches(':hover')) {
+                        return;
+                    }
+                    container.style[direction] = closed_container_pos;
+                    tab.style[direction] = closed_tab_pos;
+                }, timeout);
+            });
+            tab.addEventListener('mouseleave', () => {
+                setTimeout(() => {
+                    if (container.matches(':hover') || tab.matches(':hover')) {
+                        return;
+                    }
+                    container.style[direction] = closed_container_pos;
+                    tab.style[direction] = closed_tab_pos;
+                }, timeout);
+            });
 
-        // New event listener for handling the tab hover
-        legendTabContainer.addEventListener('mouseenter', () => {
-            legendContainer.style.left = '0';
-            legendTabContainer.style.left = '20.85%';
-        });
-
-        searchTabContainer.addEventListener('mouseenter', () => {
-            searchContainer.style.right = '0';
-            searchTabContainer.style.right = '21.85%';
-        });
-
-        searchTabContainer.addEventListener('mouseleave', () => {
-            setTimeout(() => {
-                if (searchContainer.matches(':hover') || searchTabContainer.matches(':hover')) {
-                    return;
-                }
-                searchContainer.style.right = '-23.2%';
-                searchTabContainer.style.right = '-1.15%';
-            }, search_timeout); // 1000 milliseconds (1 second) delay
-        });
-
-        searchContainer.addEventListener('mouseleave', () => {
-            setTimeout(() => {
-                if (searchContainer.matches(':hover') || searchTabContainer.matches(':hover')) {
-                    return;
-                }
-                searchContainer.style.right = '-23.2%';
-                searchTabContainer.style.right = '-1.15%';
-            }, search_timeout); // 1000 milliseconds (1 second) delay
-        });
+            // New event listener for handling the tab hover
+            tab.addEventListener('mouseenter', () => {
+                container.style[direction] = open_container_pos;
+                tab.style[direction] = open_tab_pos;
+            });
+        };
+        
+        registerMouseEvents(legendContainer, legendTabContainer, legend_timeout, 'left', '-22.2%', '-1.15%', '0', '20.85%');
+        registerMouseEvents(searchContainer, searchTabContainer, search_timeout, 'right', '-23.2%', '-1.15%', '0', '21.85%');
+        registerMouseEvents(dagContainer, dagTabContainer, dag_timeout, 'right', '-23.2%', '-1.15%', '0', '21.85%');
 
         function uncollapse_children(node, valid_names) {
             let collapseParent = valid_names.includes(node.name);
@@ -589,9 +606,11 @@
                                     name: modules
                                 });
 
-                                
+
                             }
                         });
+
+                        create_dag("hierarchal_modules", "L5_M46", "dag");
                     })
                 })
             });
