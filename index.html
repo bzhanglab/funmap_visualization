@@ -564,6 +564,49 @@
                         };
 
                         option && pie_chart.setOption(option);
+
+                        let dag = create_dag("dense_modules", "C195", "dag");
+                        let dag_chart = null;
+                        dag.then((res) => {
+                            dag_chart = res;
+                            chart.on("mouseover", function(params) {
+                                update_dag_chart(params.name);
+                            });
+                        })
+
+                        update_dag_chart = function(clique_id, gene = null) {
+                            let res = update_dag(dag_chart, "hierarchal_modules", clique_id);
+                                res.then((result) => {
+                                    if (!!result) {
+                                        dag_chart = result;
+                                        if (!has_shown_dag) {
+                                            dagTabContainer.style.display = "block";
+                                            dagContainer.style.display = "block";
+                                            has_shown_dag = true;
+                                        }
+                                        dagTabContainer.dispatchEvent(new Event('mouseenter'));
+                                        setTimeout(() => {
+                                            timeout_id += 1;
+                                            dagTabContainer.dispatchEvent(new Event('mouseleave'));
+                                        }, 1000);
+                                        if (gene != null) {
+                                            dag_chart.dispatchAction({
+                                                type: 'highlight',
+                                                seriesIndex: 0,
+                                                name: gene
+                                            });
+                                        }
+                                    }
+                                    else {
+                                        dagTabContainer.style.display = "none";
+                                        dagContainer.style.display = "none";
+                                        dagContainer.style.right = '-35.2%'; // Hide
+                                        dagTabContainer.style.right = '-1.15%';
+                                        has_shown_dag = false;
+                                    }
+                                });
+                        }
+
                         function resize_pie_chart() {
                             pie_chart.resize({
                                 width: pieChartDom.clientWidth,
@@ -608,38 +651,10 @@
                                     seriesIndex: 0,
                                     name: modules
                                 });
-
-
+                                update_dag_chart(modules[modules.length - 1], gene);
                             }
                         });
 
-                        let dag = create_dag("dense_modules", "C195", "dag");
-                        dag.then((dag_chart) => {
-                            chart.on("mouseover", function(params) {
-                                let res = update_dag(dag_chart, "hierarchal_modules", params.name);
-                                res.then((result) => {
-                                    if (!!result) {
-                                        if (!has_shown_dag) {
-                                            dagTabContainer.style.display = "block";
-                                            dagContainer.style.display = "block";
-                                            has_shown_dag = true;
-                                        }
-                                        dagTabContainer.dispatchEvent(new Event('mouseenter'));
-                                        setTimeout(() => {
-                                            timeout_id += 1;
-                                            dagTabContainer.dispatchEvent(new Event('mouseleave'));
-                                        }, 1000);
-                                    }
-                                    else {
-                                        dagTabContainer.style.display = "none";
-                                        dagContainer.style.display = "none";
-                                        dagContainer.style.right = '-35.2%'; // Hide
-                                        dagTabContainer.style.right = '-1.15%';
-                                        has_shown_dag = false;
-                                    }
-                                });
-                            });
-                        });
                     })
                 })
             });

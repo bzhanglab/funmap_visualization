@@ -7,6 +7,10 @@ function create_dag(clique_type, clique_id, element_id = 'dag') {
                 return false;
             }
 
+            // add 
+            for (let i = 0; i < clique_data.edges.length; i++) {
+                clique_data.edges[i].emphasis = {"disabled": true};
+            }
             function autoFontSize() {
                 let width = document.getElementById(element_id).offsetWidth;
                 let height = document.getElementById(element_id).offsetHeight;
@@ -45,7 +49,7 @@ function create_dag(clique_type, clique_id, element_id = 'dag') {
                     }
                 },
                 tooltip: {
-                    trigger: 'item',
+                    trigger: 'none',
                     triggerOn: 'mousemove',
                     formatter: "{b}",
                     backgroundColor: '#F6F8FC',
@@ -88,6 +92,16 @@ function create_dag(clique_type, clique_id, element_id = 'dag') {
                         },
                         lineStyle: {
                             width: clique_data.edges.length < 100 ? 0.5 : 0.25
+                        },
+                        edgeSymbol: ['none', 'arrow'],
+                        edgeSymbolSize: [0, 0],
+                        emphasis: {
+                            focus: 'none',
+                            itemStyle: {
+                                borderColor: '#000',
+                                borderWidth: 2,
+                                color: '#FFA500'
+                            }
                         }
                     }
                 ]
@@ -118,11 +132,28 @@ function update_dag(chart, clique_type, clique_id) {
         .then(response => response.json())
         .then(clique_data => {
             if (clique_data.nodes.length > 50) {
+                // chart with text "Too many nodes to display."
+                chart.setOption({ // vertically center title
+                    title: {
+                        text: "Too many nodes to display.",
+                        top: 'middle',
+                    },
+                    series: [
+                        {
+                            nodes: [],
+                            links: []
+                        }
+                    ]
+                });
                 return false;
+            }
+            for (let i = 0; i < clique_data.edges.length; i++) {
+                clique_data.edges[i].emphasis = {"disabled": true};
             }
             chart.setOption({
                 title: {
                     text: clique_id,
+                    top: "top"
                 },
                 series: [
                     {
