@@ -184,3 +184,33 @@ function create_dense_dag(element_id, clique_id, nodes, edges) {
   });
   return myChart;
 }
+
+function dense_svg(config = {}) {
+  let data_url = config.data_url || "data/dense_modules.json";
+  let columns = config.columns || 4;
+  let element_id = config.element_id || "dense_tables";
+  let classes = config.classes || "square";
+  let module_data = {};
+  const CLUSTER_COUNT = 281;
+  let table = document.getElementById(element_id);
+  // create divs with a square layout
+  // for each cluster
+  let currenttr = document.createElement("tr");
+  for (let i = 0; i < CLUSTER_COUNT; i++) {
+    if (i % columns == 0 && i != 0) {
+      // add row
+      table.appendChild(currenttr);
+      currenttr = document.createElement("tr");
+    }
+    let img = document.createElement("img");
+    img.className = classes;
+    img.id = "cluster_" + (i + 1);
+    img.src = "data/svg/C" + (i + 1) + ".svg";
+    currenttr.appendChild(img);
+  }
+  table.appendChild(currenttr);
+  // setTimeout(() => {
+  set_loading_message("Done!");
+  removeFadeOut(document.getElementById("loading"), 3000);
+  // }, 1000);
+}
