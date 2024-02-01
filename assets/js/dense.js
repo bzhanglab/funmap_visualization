@@ -1,8 +1,55 @@
-function create_dag(clique_type, clique_id, element_id = "dag") {
+function dense(echarts, config = {}) {
+  data_path = config.data_path || "data/dense_modules.json";
+  element_id = config.element_id || "chart";
+
+  fetch(data_path)
+    .then((res) => res.json())
+    .then((dense_modules) => {
+      for (let i = 0; i < dense_modules.length; i++) {
+        let max = Math.max(Math.sqrt(dense_modules[i].data.nodes.length));
+        for (let j = 0; j < dense_modules[i].data.nodes.length; j++) {
+          dense_modules[i].data.nodes[j].x = (j % max) / 10000;
+          dense_modules[i].data.nodes[j].y = Math.floor(j / max) / 10000;
+        }
+      }
+      let max_length = Math.max(Math.sqrt(dense_modules.length));
+      var myChart = echarts.init(document.getElementById(element_id));
+      var option = {
+        title: {
+          text: "Dense Modules",
+          top: "top",
+        },
+        roam: true,
+        zoom: 0.01,
+        series: dense_modules.map((module, idx) => {
+          return {
+            roam: true,
+            type: "graph",
+            layout: "none",
+            left: ((idx % max_length) * 100) / max_length + "%",
+            top: (Math.floor(idx / max_length) * 100) / max_length + "%",
+            nodes: module.data.nodes,
+            links: module.data.edges,
+            name: module.name,
+          };
+        }),
+      };
+      option && myChart.setOption(option, "chart");
+    });
+}
+
+function create_dense_dag(
+  clique_type,
+  clique_id,
+  element_id = "dag",
+  ignore_size = true,
+) {
+  console.log(element_id);
   return fetch("data/" + clique_type + "/" + clique_id + ".json")
     .then((response) => response.json())
     .then((clique_data) => {
-      if (clique_data.nodes.length > 50) {
+      if (clique_data.nodes.length > 50 && !ignore_size) {
+        console.log("Clique too large to render");
         return false;
       }
       function autoFontSize() {
@@ -67,7 +114,7 @@ function create_dag(clique_type, clique_id, element_id = "dag") {
           {
             type: "graph",
             name: "Clique " + clique_id,
-            draggable: clique_data.nodes.length < 100,
+            draggable: false,
             layout: "force",
             nodes: clique_data.nodes,
             links: clique_data.edges,
@@ -89,7 +136,9 @@ function create_dag(clique_type, clique_id, element_id = "dag") {
             force: {
               repulsion: 300,
               edgeLength: autoEdgeLength(),
-              friction: 0.03,
+              friction: 0.05,
+              initLayout: "circular",
+              layoutAnimation: false,
             },
             lineStyle: {
               width: clique_data.edges.length < 100 ? 1 : 0.5,
@@ -123,42 +172,5 @@ function create_dag(clique_type, clique_id, element_id = "dag") {
         });
       });
       return myChart;
-    });
-}
-
-function update_dag(chart, clique_type, clique_id) {
-  return fetch("data/" + clique_type + "/" + clique_id + ".json")
-    .then((response) => response.json())
-    .then((clique_data) => {
-      if (clique_data.nodes.length > 50) {
-        // chart with text "Too many nodes to display."
-        chart.setOption({
-          // vertically center title
-          title: {
-            text: "Too many nodes to display.",
-            top: "middle",
-          },
-          series: [
-            {
-              nodes: [],
-              links: [],
-            },
-          ],
-        });
-        return false;
-      }
-      chart.setOption({
-        title: {
-          text: clique_id,
-          top: "top",
-        },
-        series: [
-          {
-            nodes: clique_data.nodes,
-            links: clique_data.edges,
-          },
-        ],
-      });
-      return chart;
     });
 }
