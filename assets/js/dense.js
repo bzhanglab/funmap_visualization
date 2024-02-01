@@ -1,176 +1,186 @@
-function dense(echarts, config = {}) {
-  data_path = config.data_path || "data/dense_modules.json";
-  element_id = config.element_id || "chart";
+function removeFadeOut(el, speed) {
+  var seconds = speed / 1000;
+  el.style.transition = "opacity " + seconds + "s ease";
 
-  fetch(data_path)
-    .then((res) => res.json())
-    .then((dense_modules) => {
-      for (let i = 0; i < dense_modules.length; i++) {
-        let max = Math.max(Math.sqrt(dense_modules[i].data.nodes.length));
-        for (let j = 0; j < dense_modules[i].data.nodes.length; j++) {
-          dense_modules[i].data.nodes[j].x = (j % max) / 10000;
-          dense_modules[i].data.nodes[j].y = Math.floor(j / max) / 10000;
-        }
-      }
-      let max_length = Math.max(Math.sqrt(dense_modules.length));
-      var myChart = echarts.init(document.getElementById(element_id));
-      var option = {
-        title: {
-          text: "Dense Modules",
-          top: "top",
-        },
-        roam: true,
-        zoom: 0.01,
-        series: dense_modules.map((module, idx) => {
-          return {
-            roam: true,
-            type: "graph",
-            layout: "none",
-            left: ((idx % max_length) * 100) / max_length + "%",
-            top: (Math.floor(idx / max_length) * 100) / max_length + "%",
-            nodes: module.data.nodes,
-            links: module.data.edges,
-            name: module.name,
-          };
-        }),
-      };
-      option && myChart.setOption(option, "chart");
-    });
+  el.style.opacity = 0;
+  setTimeout(function () {
+    el.parentNode.removeChild(el);
+  }, speed);
 }
 
-function create_dense_dag(
-  clique_type,
-  clique_id,
-  element_id = "dag",
-  ignore_size = true,
-) {
-  console.log(element_id);
-  return fetch("data/" + clique_type + "/" + clique_id + ".json")
-    .then((response) => response.json())
-    .then((clique_data) => {
-      if (clique_data.nodes.length > 50 && !ignore_size) {
-        console.log("Clique too large to render");
-        return false;
-      }
-      function autoFontSize() {
-        let width = document.getElementById(element_id).offsetWidth;
-        let height = document.getElementById(element_id).offsetHeight;
-        let new_size = Math.round(
-          Math.sqrt(width * width + height * height) /
-            (40 + Math.log(clique_data.nodes.length)),
-        );
-        new_size = Math.min(new_size, 20);
-        return new_size;
-      }
-      function autoSymbolSize() {
-        let width = document.getElementById(element_id).offsetWidth;
-        let height = document.getElementById(element_id).offsetHeight;
-        let new_size = Math.round(
-          Math.sqrt(width * width + height * height) /
-            (12 + Math.log(clique_data.nodes.length)),
-        );
-        new_size = Math.min(new_size, 60);
-        return new_size;
-      }
-      function autoEdgeLength() {
-        let width = document.getElementById(element_id).offsetWidth;
-        let height = document.getElementById(element_id).offsetHeight;
-        let new_size = Math.round(
-          Math.sqrt(width * width + height * height) /
-            (0.75 + Math.log(clique_data.nodes.length)),
-        );
-        new_size = Math.min(new_size, 300);
-        return new_size;
-      }
+function set_loading_message(message) {
+  let el = document.getElementById("loading-text");
+  el.innerHTML = message;
+  console.log(message);
+}
 
-      var chartDom = document.getElementById(element_id);
-      var myChart = echarts.init(chartDom);
-      var option;
+async function dense(config = {}) {
+  let data_url = config.data_url || "data/dense_modules.json";
+  let columns = config.columns || 4;
+  let element_id = config.element_id || "dense_tables";
+  let classes = config.classes || "square";
+  let module_data = {};
+  set_loading_message("Downloading dense modules...");
+  await fetch(data_url)
+    .then((res) => res.json())
+    .then((dl_module_data) => {
+      module_data = dl_module_data;
+    });
+  const CLUSTER_COUNT = module_data.length;
+  let table = document.getElementById(element_id);
+  // create divs with a square layout
+  // for each cluster
+  let currenttr = document.createElement("tr");
+  for (let i = 0; i < CLUSTER_COUNT; i++) {
+    if (i % columns == 0 && i != 0) {
+      // add row
+      table.appendChild(currenttr);
+      currenttr = document.createElement("tr");
+    }
+    let div = document.createElement("div");
+    div.className = classes;
+    div.id = "cluster_" + (i + 1);
+    currenttr.appendChild(div);
+  }
+  table.appendChild(currenttr);
+  for (let i = 0; i < CLUSTER_COUNT; i++) {
+    set_loading_message(
+      "Loading " + (i + 1) + " of " + CLUSTER_COUNT + " dense modules...",
+    );
+    setTimeout(() => {
+      create_dense_dag(
+        "cluster_" + (i + 1),
+        module_data[i].name,
+        module_data[i].data.nodes,
+        module_data[i].data.edges,
+      );
+    }, 0);
+  }
+  // setTimeout(() => {
+  set_loading_message("Done!");
+  removeFadeOut(document.getElementById("loading"), 3000);
+  // }, 1000);
+}
 
-      option = {
-        title: {
-          text: clique_id,
-          left: "center",
-          textStyle: {
-            fontSize: autoFontSize() + 10,
-            fontWeight: "bolder",
-            color: "#333",
-          },
-        },
-        tooltip: {
-          trigger: "item",
-          triggerOn: "mousemove",
-          formatter: "{b}",
+function create_dense_dag(element_id, clique_id, nodes, edges) {
+  function autoFontSize() {
+    let width = document.getElementById(element_id).offsetWidth;
+    let height = document.getElementById(element_id).offsetHeight;
+    let new_size = Math.round(
+      Math.sqrt(width * width + height * height) /
+        (40 + Math.log(nodes.length)),
+    );
+    new_size = Math.min(new_size, 20);
+    return new_size;
+  }
+  function autoSymbolSize() {
+    let width = document.getElementById(element_id).offsetWidth;
+    let height = document.getElementById(element_id).offsetHeight;
+    let new_size = Math.round(
+      Math.sqrt(width * width + height * height) /
+        (12 + Math.log(nodes.length)),
+    );
+    new_size = Math.min(new_size, 60);
+    return new_size;
+  }
+  function autoEdgeLength() {
+    let width = document.getElementById(element_id).offsetWidth;
+    let height = document.getElementById(element_id).offsetHeight;
+    let new_size = Math.round(
+      Math.sqrt(width * width + height * height) /
+        (0.75 + Math.log(nodes.length)),
+    );
+    new_size = Math.min(new_size, 300);
+    return new_size;
+  }
+
+  var chartDom = document.getElementById(element_id);
+  var myChart = echarts.init(chartDom);
+  var option;
+
+  option = {
+    title: {
+      text: clique_id,
+      left: "center",
+      textStyle: {
+        fontSize: autoFontSize() + 10,
+        fontWeight: "bolder",
+        color: "#333",
+      },
+    },
+    tooltip: {
+      trigger: "item",
+      triggerOn: "mousemove",
+      formatter: "{b}",
+      backgroundColor: "#F6F8FC",
+      borderColor: "#8C8D8E",
+      borderWidth: 1,
+      padding: [3, 3, 3, 3],
+      textStyle: {
+        color: "#4C5058",
+        fontSize: autoFontSize(),
+      },
+    },
+    series: [
+      {
+        type: "graph",
+        name: "Clique " + clique_id,
+        draggable: false,
+        layout: "force",
+        nodes: nodes,
+        links: edges,
+        coordinateSystem: null,
+        roam: true,
+        symbolSize: autoSymbolSize(),
+        label: {
+          show: true,
+          position: "inside",
+          fontSize: autoFontSize(),
+          padding: [3, 3, 3, 3],
+          verticalAlign: "middle",
+          color: "#4C5058",
           backgroundColor: "#F6F8FC",
           borderColor: "#8C8D8E",
           borderWidth: 1,
-          padding: [3, 3, 3, 3],
+          borderRadius: 4,
+        },
+        force: {
+          repulsion: 300,
+          edgeLength: autoEdgeLength(),
+          friction: 0.05,
+          initLayout: "circular",
+          layoutAnimation: false,
+        },
+        lineStyle: {
+          width: edges.length < 100 ? 1 : 0.5,
+        },
+        emphasis: {
+          focus: "none",
+          itemStyle: {
+            borderColor: "#000",
+            borderWidth: 2,
+            color: "#FFA505",
+          },
+        },
+      },
+    ],
+  };
+  option && myChart.setOption(option);
+  window.addEventListener("resize", function () {
+    myChart.resize();
+    myChart.setOption({
+      series: {
+        label: {
           textStyle: {
-            color: "#4C5058",
             fontSize: autoFontSize(),
           },
         },
-        series: [
-          {
-            type: "graph",
-            name: "Clique " + clique_id,
-            draggable: false,
-            layout: "force",
-            nodes: clique_data.nodes,
-            links: clique_data.edges,
-            coordinateSystem: null,
-            roam: true,
-            symbolSize: autoSymbolSize(),
-            label: {
-              show: true,
-              position: "inside",
-              fontSize: autoFontSize(),
-              padding: [3, 3, 3, 3],
-              verticalAlign: "middle",
-              color: "#4C5058",
-              backgroundColor: "#F6F8FC",
-              borderColor: "#8C8D8E",
-              borderWidth: 1,
-              borderRadius: 4,
-            },
-            force: {
-              repulsion: 300,
-              edgeLength: autoEdgeLength(),
-              friction: 0.05,
-              initLayout: "circular",
-              layoutAnimation: false,
-            },
-            lineStyle: {
-              width: clique_data.edges.length < 100 ? 1 : 0.5,
-            },
-            emphasis: {
-              focus: "none",
-              itemStyle: {
-                borderColor: "#000",
-                borderWidth: 2,
-                color: "#FFA505",
-              },
-            },
-          },
-        ],
-      };
-      option && myChart.setOption(option);
-      window.addEventListener("resize", function () {
-        myChart.resize();
-        myChart.setOption({
-          series: {
-            label: {
-              textStyle: {
-                fontSize: autoFontSize(),
-              },
-            },
-            symbolSize: autoSymbolSize(),
-            force: {
-              edgeLength: autoEdgeLength(),
-            },
-          },
-        });
-      });
-      return myChart;
+        symbolSize: autoSymbolSize(),
+        force: {
+          edgeLength: autoEdgeLength(),
+        },
+      },
     });
+  });
+  return myChart;
 }

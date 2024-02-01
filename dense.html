@@ -24,10 +24,91 @@
             width: 100%;
             height: 100%;
         }
+
+        #loading-container {
+            z-index: 2001;
+            background-color: #FFF;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        #loading {
+            width: 100%;
+            height: 100%;
+            background-color: #FFF;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            position: absolute;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #000;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            position: relative;
+            animation: pulse 1s linear infinite;
+            z: 1000;
+        }
+
+        .loader:after {
+            content: '';
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border: 5px solid #000;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            animation: scaleUp 1s linear infinite;
+        }
+
+        @keyframes scaleUp {
+            0% {
+                transform: translate(-50%, -50%) scale(0)
+            }
+
+            60%,
+            100% {
+                transform: translate(-50%, -50%) scale(1)
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            60%,
+            100% {
+                transform: scale(1)
+            }
+
+            80% {
+                transform: scale(1.2)
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div id="loading">
+        <div id="loading-container">
+            <p style="text-align: center; font-family: Arial, Helvetica, sans-serif;">
+                <span class="loader"></span><br>
+                Loading...
+                <br>
+                <span id="loading-text">placeholder</span>
+            </p>
+        </div>
+    </div>
     <div id="dense-outer">
         <table id="dense_tables" style="border: 0px solid black; width: 100%; height: 100%;">
         </table>
@@ -190,26 +271,9 @@
             "0",
             "33.95%",
         );
-        const CLUSTER_COUNT = 281;
-        let table = document.getElementById("dense_tables");
-        // create divs with a square layout
-        // for each cluster
-        let columns = 4;
-        let currenttr = document.createElement("tr");
-        for (let i = 0; i < CLUSTER_COUNT; i++) {
-            if (i % columns == 0 && i != 0) { // add row
-                table.appendChild(currenttr);
-                currenttr = document.createElement("tr");
-            }
-            let div = document.createElement("div");
-            div.className = "square";
-            div.id = "cluster_" + (i + 1);
-            currenttr.appendChild(div);
-        }
-        table.appendChild(currenttr);
-        for (let i = 0; i < CLUSTER_COUNT; i++) {
-            create_dense_dag("dense_modules", "C" + (i + 1), element_id = "cluster_" + (i + 1))
-        }
+
+        // removeFadeOut(document.getElementById("loading"), 1000);
+        dense();
 
     </script>
 </body>
