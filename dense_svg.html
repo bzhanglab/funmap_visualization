@@ -12,8 +12,8 @@
             .square,
             svg,
             img {
-                width: 25%;
-                height: 250px;
+                width: 20%;
+                height: 200px;
                 display: inline-block;
             }
 
@@ -121,119 +121,7 @@
             ></table>
         </div>
         <script>
-            // const legendContainer = document.getElementById("legend-container");
-            // const legendTabContainer = document.getElementById(
-            //     "legend-tab-container",
-            // );
-            // const searchContainer = document.getElementById("search-container");
-            // const searchTabContainer = document.getElementById(
-            //     "search-tab-container",
-            // );
-            // const dagContainer = document.getElementById("dag-container");
-            // const dagTabContainer =
-            //     document.getElementById("dag-tab-container");
-
-            // const initial_timeout = 3000;
-            // const legend_timeout = 3000;
-            // const search_timeout = 3000;
-            // const dag_timeout = 3000;
-            // let has_shown_dag = false;
-            // dagContainer.style.right = "-35.2%"; // Hide initially
-            // dagTabContainer.style.right = "-1.15%";
-            // let timeout_id = 0;
-            // setTimeout(() => {
-            //     legendContainer.style.left = "-22.2%";
-            //     legendTabContainer.style.left = "-1.15%";
-            //     searchContainer.style.right = "-23.2%";
-            //     searchTabContainer.style.right = "-1.15%";
-            // }, initial_timeout);
-
-            // registerMouseEvents = function (
-            //     container,
-            //     tab,
-            //     timeout,
-            //     direction,
-            //     closed_container_pos,
-            //     closed_tab_pos,
-            //     open_container_pos,
-            //     open_tab_pos,
-            // ) {
-            //     container.addEventListener("mouseleave", () => {
-            //         setTimeout(() => {
-            //             if (
-            //                 container.matches(":hover") ||
-            //                 tab.matches(":hover")
-            //             ) {
-            //                 return;
-            //             }
-            //             container.style[direction] = closed_container_pos;
-            //             tab.style[direction] = closed_tab_pos;
-            //         }, timeout);
-            //     });
-            //     tab.addEventListener("mouseleave", () => {
-            //         setTimeout(
-            //             (old_timeout_id) => {
-            //                 if (
-            //                     container.id == "dag-container" &&
-            //                     old_timeout_id != timeout_id
-            //                 ) {
-            //                     return;
-            //                 }
-            //                 if (
-            //                     container.matches(":hover") ||
-            //                     tab.matches(":hover")
-            //                 ) {
-            //                     return;
-            //                 }
-            //                 container.style[direction] = closed_container_pos;
-            //                 tab.style[direction] = closed_tab_pos;
-            //             },
-            //             timeout,
-            //             timeout_id,
-            //         );
-            //     });
-
-            //     // New event listener for handling the tab hover
-            //     tab.addEventListener("mouseenter", () => {
-            //         container.style[direction] = open_container_pos;
-            //         tab.style[direction] = open_tab_pos;
-            //     });
-            // };
-
-            // registerMouseEvents(
-            //     legendContainer,
-            //     legendTabContainer,
-            //     legend_timeout,
-            //     "left",
-            //     "-22.2%",
-            //     "-1.15%",
-            //     "0",
-            //     "20.85%",
-            // );
-            // registerMouseEvents(
-            //     searchContainer,
-            //     searchTabContainer,
-            //     search_timeout,
-            //     "right",
-            //     "-23.2%",
-            //     "-1.15%",
-            //     "0",
-            //     "21.85%",
-            // );
-            // registerMouseEvents(
-            //     dagContainer,
-            //     dagTabContainer,
-            //     dag_timeout,
-            //     "right",
-            //     "-35.2%",
-            //     "-1.15%",
-            //     "0",
-            //     "33.95%",
-            // );
-
-            // removeFadeOut(document.getElementById("loading"), 1000);
-            // dense();
-            dense_svg();
+            dense_svg({ image_count: 20 });
         </script>
     </body>
 </html>

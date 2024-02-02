@@ -186,31 +186,65 @@ function create_dense_dag(element_id, clique_id, nodes, edges) {
 }
 
 function dense_svg(config = {}) {
+  const CLUSTER_COUNT = 281;
   let data_url = config.data_url || "data/dense_modules.json";
-  let columns = config.columns || 4;
+  let columns = config.columns || 5;
   let element_id = config.element_id || "dense_tables";
   let classes = config.classes || "square";
+  let image_count = config.image_count || CLUSTER_COUNT;
   let module_data = {};
-  const CLUSTER_COUNT = 281;
+
   let table = document.getElementById(element_id);
   // create divs with a square layout
   // for each cluster
   let currenttr = document.createElement("tr");
-  for (let i = 0; i < CLUSTER_COUNT; i++) {
-    if (i % columns == 0 && i != 0) {
-      // add row
-      table.appendChild(currenttr);
-      currenttr = document.createElement("tr");
+  var bucket = [];
+  if (image_count != CLUSTER_COUNT) {
+    for (var i = 0; i < CLUSTER_COUNT; i++) {
+      bucket.push(i);
     }
-    let img = document.createElement("img");
-    img.className = classes;
-    img.id = "cluster_" + (i + 1);
-    img.src = "data/svg/C" + (i + 1) + ".svg";
-    currenttr.appendChild(img);
+
+    function getRandomFromBucket() {
+      var randomIndex = Math.floor(Math.random() * bucket.length);
+      return bucket.splice(randomIndex, 1)[0];
+    }
+
+    let random_indices = [];
+    for (let i = 0; i < image_count; i++) {
+      random_indices.push(getRandomFromBucket());
+    }
+    random_indices.sort((a, b) => a - b);
+    for (let i = 0; i < image_count; i++) {
+      if (i % columns == 0 && i != 0) {
+        // add row
+        table.appendChild(currenttr);
+        currenttr = document.createElement("tr");
+      }
+      let img = document.createElement("img");
+      let cluster_id = random_indices[i];
+      img.className = classes;
+      img.id = "cluster_" + i;
+      img.src = "data/svg/C" + (cluster_id + 1) + ".svg";
+      currenttr.appendChild(img);
+    }
+    table.appendChild(currenttr);
+    set_loading_message("Done!");
+    removeFadeOut(document.getElementById("loading"), 3000);
+  } else {
+    for (let i = 0; i < CLUSTER_COUNT; i++) {
+      if (i % columns == 0 && i != 0) {
+        // add row
+        table.appendChild(currenttr);
+        currenttr = document.createElement("tr");
+      }
+      let img = document.createElement("img");
+      img.className = classes;
+      img.id = "cluster_" + (i + 1);
+      img.src = "data/svg/C" + (i + 1) + ".svg";
+      currenttr.appendChild(img);
+    }
+    table.appendChild(currenttr);
+    set_loading_message("Done!");
+    removeFadeOut(document.getElementById("loading"), 3000);
   }
-  table.appendChild(currenttr);
-  // setTimeout(() => {
-  set_loading_message("Done!");
-  removeFadeOut(document.getElementById("loading"), 3000);
-  // }, 1000);
 }
