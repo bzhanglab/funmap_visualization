@@ -58,7 +58,7 @@ function funmap(echarts, config = {}) {
                         setFontWeight(node.children[i]);
                       }
                     }
-                    if (node.size < 50) {
+                    if (node.size <= 50) {
                       node.label = {
                         fontWeight: "bold",
                       };
@@ -179,8 +179,8 @@ function funmap(echarts, config = {}) {
                         top: "bottom",
                       },
                       text: [
-                        "Signed log10 meta-p\n\nHigher in Tumor compared to Normal",
-                        "Lower in Tumor compared to Normal",
+                        "Signed log10 meta-p\n\nHigher in Tumor vs. Normal",
+                        "Lower in Tumor vs. Normal",
                       ],
                       precision: 3,
                       inRange: {
