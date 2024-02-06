@@ -50,6 +50,21 @@ function funmap(echarts, config = {}) {
               fetch(funmap_json)
                 .then((res) => res.json())
                 .then((chartData) => {
+                  // set label.font weight to bold if node size is less than 50. Recursively for children as well
+                  //
+                  function setFontWeight(node) {
+                    if (node.children && node.children.length > 0) {
+                      for (let i = 0; i < node.children.length; i++) {
+                        setFontWeight(node.children[i]);
+                      }
+                    }
+                    if (node.size < 50) {
+                      node.label = {
+                        fontWeight: "bold",
+                      };
+                    }
+                  }
+                  setFontWeight(chartData);
                   var chartOptions = {
                     title: {
                       text: "FunMap Hierarchical Organization",
@@ -117,8 +132,12 @@ function funmap(echarts, config = {}) {
                             return "circle";
                           }
                         },
-
-                        symbolSize: 20,
+                        symbolSize: (_value, params) => {
+                          node = params.data;
+                          return node.name == "L1_M1"
+                            ? 20
+                            : 6.7737 * Math.log(node.size) - 1.99;
+                        },
                         initialTreeDepth: 1,
                         label: {
                           position: "top",

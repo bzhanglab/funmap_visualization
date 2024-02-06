@@ -1,7 +1,6 @@
 function removeFadeOut(el, speed) {
   var seconds = speed / 1000;
   el.style.transition = "opacity " + seconds + "s ease";
-
   el.style.opacity = 0;
   setTimeout(function () {
     el.parentNode.removeChild(el);
@@ -56,10 +55,8 @@ async function dense(config = {}) {
       );
     }, 0);
   }
-  // setTimeout(() => {
   set_loading_message("Done!");
   removeFadeOut(document.getElementById("loading"), 3000);
-  // }, 1000);
 }
 
 function create_dense_dag(element_id, clique_id, nodes, edges) {
@@ -187,12 +184,10 @@ function create_dense_dag(element_id, clique_id, nodes, edges) {
 
 function dense_svg(config = {}) {
   const CLUSTER_COUNT = 281;
-  let data_url = config.data_url || "data/dense_modules.json";
   let columns = config.columns || 5;
   let element_id = config.element_id || "dense_tables";
   let classes = config.classes || "square";
   let image_count = config.image_count || CLUSTER_COUNT;
-  let module_data = {};
 
   let table = document.getElementById(element_id);
   // create divs with a square layout

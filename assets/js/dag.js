@@ -17,7 +17,7 @@ function create_dag(
         let height = document.getElementById(element_id).offsetHeight;
         let new_size = Math.round(
           Math.sqrt(width * width + height * height) /
-            (40 + Math.log(clique_data.nodes.length)),
+            (60 + Math.log(clique_data.nodes.length)),
         );
         new_size = Math.min(new_size, 20);
         return new_size;
