@@ -70,6 +70,37 @@ function create_dag(
             fontSize: autoFontSize(),
           },
         },
+        visualMap: {
+          type: "continuous",
+          min: -165,
+          max: 165,
+          seriesIndex: 0,
+          title: {
+            text: "Signed log10 meta-p",
+            left: "center",
+            top: "bottom",
+          },
+          text: [
+            "Signed log10 meta-p\n\nHigher in Tumor vs. Normal",
+            "Lower in Tumor vs. Normal",
+          ],
+          precision: 3,
+          inRange: {
+            color: [
+              "#67001f",
+              "#b2182b",
+              "#d6604d",
+              "#f4a582",
+              "#fddbc7",
+              "#f7f7f7",
+              "#d1e5f0",
+              "#92c5de",
+              "#4393c3",
+              "#2166ac",
+              "#053061",
+            ].reverse(),
+          },
+        },
         series: [
           {
             type: "graph",
@@ -96,7 +127,11 @@ function create_dag(
             force: {
               repulsion: 300,
               edgeLength: autoEdgeLength(),
-              friction: 0.03,
+              friction: 0.05,
+            },
+            itemStyle: {
+              borderColor: "#000",
+              borderWidth: 1,
             },
             lineStyle: {
               width: clique_data.edges.length < 100 ? 1 : 0.5,

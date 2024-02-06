@@ -135,7 +135,7 @@ function funmap(echarts, config = {}) {
                         symbolSize: (_value, params) => {
                           node = params.data;
                           return node.name == "L1_M1"
-                            ? 50
+                            ? 51
                             : 0.0273 * node.size + 19.454;
                           //: 6.7737 * Math.log(node.size) - 1.99;
                         },
