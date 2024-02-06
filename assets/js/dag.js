@@ -42,9 +42,28 @@ function create_dag(
         new_size = Math.min(new_size, 300);
         return new_size;
       }
+      function autoMapDimensions() {
+        // return array
+        // array[0] = width
+        // array[1] = height
+        let width = document.getElementById(element_id).offsetWidth;
+        let height = document.getElementById(element_id).offsetHeight;
+        let map_height = Math.round(
+          Math.sqrt(width * width + height * height) /
+            (7 + Math.log(clique_data.nodes.length)),
+        );
+        let map_width = Math.round(
+          Math.sqrt(width * width + height * height) /
+            (90 + Math.log(clique_data.nodes.length)),
+        );
+        map_height = Math.min(map_height, 140);
+        map_width = Math.min(map_width, 20);
+        return [map_width, map_height];
+      }
 
       var chartDom = document.getElementById(element_id);
       var myChart = echarts.init(chartDom);
+      let map_dimensions = autoMapDimensions();
       var option;
 
       option = {
@@ -75,6 +94,8 @@ function create_dag(
           min: -165,
           max: 165,
           seriesIndex: 0,
+          itemWidth: map_dimensions[0],
+          itemHeight: map_dimensions[1],
           title: {
             text: "Signed log10 meta-p",
             left: "center",
@@ -200,6 +221,9 @@ function update_dag(chart, clique_type, clique_id) {
             links: clique_data.edges,
           },
         ],
+        visualMap: {
+          text: null,
+        },
       });
       return chart;
     });
