@@ -3,8 +3,9 @@ function create_dag(
   clique_id,
   element_id = "dag",
   ignore_size = false,
+  host = "",
 ) {
-  return fetch("data/" + clique_type + "/" + clique_id + ".json")
+  return fetch(host + "data/" + clique_type + "/" + clique_id + ".json")
     .then((response) => response.json())
     .then((clique_data) => {
       if (clique_data.nodes.length > 50 && !ignore_size) {
@@ -87,6 +88,21 @@ function create_dag(
           textStyle: {
             color: "#4C5058",
             fontSize: autoFontSize(),
+          },
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            dataView: {
+              show: true,
+              title: "Data View",
+              readOnly: true,
+            },
+            saveAsImage: {
+              show: true,
+              title: "Save as Image",
+              type: "png",
+            },
           },
         },
         visualMap: {
@@ -217,6 +233,7 @@ function update_dag(chart, clique_type, clique_id) {
         },
         series: [
           {
+            name: clique_id,
             nodes: clique_data.nodes,
             links: clique_data.edges,
           },

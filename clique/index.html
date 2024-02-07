@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>FunMap Hierarchical Organization</title>
+        <script src="../assets/js/echarts.min.js"></script>
+        <script src="../assets/js/dag.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="../assets/css/funmap.css"
+        />
+        <style>
+            body {
+                overflow-x: hidden;
+                font-family: "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+                    "Helvetica Neue", sans-serif;
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            .container {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+
+            button {
+                display: inline-block;
+                font-size: 1em;
+                font-size: 1vw;
+                line-height: var(--leading);
+                font-family: var(--font);
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                font-weight: 400;
+                box-sizing: border-box;
+                width: fit-content;
+                height: 2.5rem;
+                margin-top: 0;
+                padding: 5px;
+                border: 2px solid var(--color-body);
+                border-radius: 0;
+                appearance: none;
+                box-shadow: none;
+                height: 2.5em;
+            }
+
+            .text {
+                height: 2.5em;
+                width: 50%;
+            }
+
+            #filler {
+                display: flex;
+                flex-direction: column;
+                /* justify-content: center; */
+                align-items: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="filler" style="height: 100%">
+            <h1>FunMap Clique Search</h1>
+            <div class="centering">
+                <h3 style="text-align: center">Clique ID</h3>
+                <div class="container">
+                    <input
+                        type="text"
+                        class="text"
+                        id="clique_id"
+                        name="clique_id"
+                        value="C195"
+                    />
+                    <button id="search_button">Search</button>
+                </div>
+            </div>
+
+            <div
+                id="dag"
+                style="width: 100%; height: 100%; border: 1px solid black"
+            ></div>
+        </div>
+        <script>
+            let button = document.getElementById("search_button");
+            button.addEventListener("click", function () {
+                let clique_id = document.getElementById("clique_id").value;
+                let clique_type = "hierarchal_modules";
+                if (clique_id.startsWith("C")) {
+                    clique_type = "dense_modules";
+                }
+                dag_chart = create_dag(
+                    clique_type,
+                    clique_id,
+                    "dag",
+                    (ignore_size = true),
+                    (host = "../"),
+                );
+            });
+        </script>
+    </body>
+</html>
