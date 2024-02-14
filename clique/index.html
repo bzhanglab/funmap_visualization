@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>FunMap Hierarchical Organization</title>
+        <title>FunMap Clique Viewer</title>
         <script src="../assets/js/echarts.min.js"></script>
         <script src="../assets/js/dag.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -91,9 +91,7 @@
             ></div>
         </div>
         <script>
-            let button = document.getElementById("search_button");
-            button.addEventListener("click", function () {
-                let clique_id = document.getElementById("clique_id").value;
+            function get_dag(clique_id) {
                 let clique_type = "hierarchal_modules";
                 if (clique_id.startsWith("C")) {
                     clique_type = "dense_modules";
@@ -105,7 +103,21 @@
                     (ignore_size = true),
                     (host = "../"),
                 );
+            }
+            let button = document.getElementById("search_button");
+            button.addEventListener("click", function () {
+                let clique_id = document.getElementById("clique_id").value;
+                get_dag(clique_id);
             });
+            get_dag("C195");
+            document
+                .getElementById("clique_id")
+                .addEventListener("keyup", function (event) {
+                    event.preventDefault();
+                    if (event.keyCode === 13) {
+                        document.getElementById("search_button").click();
+                    }
+                });
         </script>
     </body>
 </html>

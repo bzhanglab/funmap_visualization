@@ -5,7 +5,7 @@ function create_dag(
   ignore_size = false,
   host = "",
 ) {
-  return fetch(host + "data/" + clique_type + "/" + clique_id + ".json")
+  return fetch(host + "data/dag/" + clique_type + "/" + clique_id + ".json")
     .then((response) => response.json())
     .then((clique_data) => {
       if (clique_data.nodes.length > 50 && !ignore_size) {
@@ -206,7 +206,7 @@ function create_dag(
 }
 
 function update_dag(chart, clique_type, clique_id) {
-  return fetch("data/" + clique_type + "/" + clique_id + ".json")
+  return fetch("data/dag/" + clique_type + "/" + clique_id + ".json")
     .then((response) => response.json())
     .then((clique_data) => {
       if (clique_data.nodes.length > 50) {
