@@ -187,6 +187,7 @@ function create_dag(
           },
         ],
       };
+      myChart.dispatchAction({ type: "restore" });
       option && myChart.setOption(option);
       window.addEventListener("resize", function () {
         myChart.resize();
@@ -212,6 +213,7 @@ function update_dag(chart, clique_type, clique_id) {
   return fetch("data/dag/" + clique_type + "/" + clique_id + ".json")
     .then((response) => response.json())
     .then((clique_data) => {
+      chart.dispatchAction({ type: "restore" });
       if (clique_data.nodes.length > 50) {
         // chart with text "Too many nodes to display."
         chart.setOption({
