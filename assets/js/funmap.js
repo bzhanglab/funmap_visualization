@@ -314,7 +314,7 @@ function funmap(echarts, config = {}) {
 
                   option && pie_chart.setOption(option);
 
-                  let dag = create_dag("dense_modules", "C195", "dag");
+                  let dag = create_dag(echarts, "dense_modules", "C195", "dag");
                   let dag_chart = null;
                   dag.then((res) => {
                     dag_chart = res;

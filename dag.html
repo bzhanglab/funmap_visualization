@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>FunMap Hierarchical Organization</title>
     <script src="assets/js/echarts.min.js"></script>
-    <script src="assets/js/dag.js"></script>
+    <script src="assets/js/min/dag.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="assets/css/funmap.css" />
 </head>
@@ -30,7 +30,7 @@
                 clique_type = "dense_modules"
             }
         }
-        dag_chart = create_dag(clique_type, clique_id, "dag", ignore_size = true);
+        dag_chart = create_dag(echarts, clique_type, clique_id, "dag", ignore_size = true);
     </script>
 </body>
 

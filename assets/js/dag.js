@@ -1,4 +1,5 @@
 function create_dag(
+  echarts,
   clique_type,
   clique_id,
   element_id = "dag",
@@ -16,14 +17,18 @@ function create_dag(
       function autoFontSize() {
         let width = document.getElementById(element_id).offsetWidth;
         let height = document.getElementById(element_id).offsetHeight;
-        let new_size = Math.round(
-          Math.sqrt(width * width + height * height) /
-            (60 + Math.log(clique_data.nodes.length)),
-        );
+        // let new_size = Math.round(
+        //   Math.sqrt(width * width + height * height) /
+        //     (60 + Math.log(clique_data.nodes.length)),
+        // );
+        let new_size = (13 / 672) * height;
+        // let new_size = (26 / 1518) * height + (13 / 1518) * width;
         new_size = Math.min(new_size, 20);
+        console.log(new_size);
         return new_size;
       }
       function autoSymbolSize() {
+        return (58 / 13) * autoFontSize();
         let width = document.getElementById(element_id).offsetWidth;
         let height = document.getElementById(element_id).offsetHeight;
         let new_size = Math.round(
@@ -34,14 +39,26 @@ function create_dag(
         return new_size;
       }
       function autoEdgeLength() {
-        let width = document.getElementById(element_id).offsetWidth;
-        let height = document.getElementById(element_id).offsetHeight;
-        let new_size = Math.round(
-          Math.sqrt(width * width + height * height) /
-            (0.75 + Math.log(clique_data.nodes.length)),
+        // let width = document.getElementById(element_id).offsetWidth;
+        // let height = document.getElementById(element_id).offsetHeight;
+        // let new_size = Math.round(
+        //   Math.sqrt(width * width + height * height) /
+        //     (0.75 + Math.log(clique_data.nodes.length)),
+        // );
+        // new_size = Math.min(new_size, 300);
+        // return 300;
+        // return Math.min(
+        //   (75 / 11) * autoFontSize() +
+        //     150 * (0.05 * clique_data.nodes.length) -
+        //     150,
+        //   300,
+        // );
+        return Math.max(
+          (100 / 11) * autoFontSize() +
+            100 * (0.05 * clique_data.nodes.length) -
+            100,
+          100,
         );
-        new_size = Math.min(new_size, 300);
-        return new_size;
       }
       function autoMapDimensions() {
         // return array

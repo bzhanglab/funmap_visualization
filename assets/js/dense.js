@@ -13,7 +13,7 @@ function set_loading_message(message) {
   console.log(message);
 }
 
-async function dense(config = {}) {
+async function dense(echarts, config = {}) {
   let data_url = config.data_url || "data/dense_modules.json";
   let columns = config.columns || 4;
   let element_id = config.element_id || "dense_tables";
@@ -48,6 +48,7 @@ async function dense(config = {}) {
     );
     setTimeout(() => {
       create_dense_dag(
+        echarts,
         "cluster_" + (i + 1),
         module_data[i].name,
         module_data[i].data.nodes,
@@ -59,7 +60,7 @@ async function dense(config = {}) {
   removeFadeOut(document.getElementById("loading"), 3000);
 }
 
-function create_dense_dag(element_id, clique_id, nodes, edges) {
+function create_dense_dag(echarts, element_id, clique_id, nodes, edges) {
   function autoFontSize() {
     let width = document.getElementById(element_id).offsetWidth;
     let height = document.getElementById(element_id).offsetHeight;
