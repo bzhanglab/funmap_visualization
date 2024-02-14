@@ -11,6 +11,7 @@
             type="text/css"
             href="../assets/css/funmap.css"
         />
+        <link rel="stylesheet" type="text/css" href="../docs/gd.min.css" />
         <style>
             body {
                 overflow-x: hidden;
@@ -80,7 +81,7 @@
                         class="text"
                         id="clique_id"
                         name="clique_id"
-                        value="C195"
+                        value="RBM34"
                     />
                     <datalist id="genes"></datalist>
                     <button id="search_button">Search</button>
@@ -127,7 +128,7 @@
                 let clique_id = document.getElementById("clique_id").value;
                 get_dag(clique_id);
             });
-            get_dag("ESR1");
+            get_dag("RBM34");
             document
                 .getElementById("clique_id")
                 .addEventListener("keyup", function (event) {

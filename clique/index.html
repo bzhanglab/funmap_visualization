@@ -11,6 +11,7 @@
             type="text/css"
             href="../assets/css/funmap.css"
         />
+        <link rel="stylesheet" type="text/css" href="../docs/gd.min.css" />
         <style>
             body {
                 overflow-x: hidden;
@@ -79,7 +80,7 @@
                         class="text"
                         id="clique_id"
                         name="clique_id"
-                        value="C195"
+                        value="Clique ID: 160"
                     />
                     <button id="search_button">Search</button>
                 </div>
@@ -92,10 +93,7 @@
         </div>
         <script>
             function get_dag(clique_id) {
-                let clique_type = "hierarchal_modules";
-                if (clique_id.startsWith("C")) {
-                    clique_type = "dense_modules";
-                }
+                let clique_type = "dense_modules";
                 dag_chart = create_dag(
                     clique_type,
                     clique_id,
@@ -107,9 +105,10 @@
             let button = document.getElementById("search_button");
             button.addEventListener("click", function () {
                 let clique_id = document.getElementById("clique_id").value;
+                clique_id = "C" + clique_id.split("Clique ID: ")[1];
                 get_dag(clique_id);
             });
-            get_dag("C195");
+            get_dag("C160");
             document
                 .getElementById("clique_id")
                 .addEventListener("keyup", function (event) {
@@ -118,6 +117,14 @@
                         document.getElementById("search_button").click();
                     }
                 });
+            document.getElementById("clique_id").oninput = function () {
+                // add Clique prefix if not present
+                let clique_id = document.getElementById("clique_id").value;
+                if (!clique_id.startsWith("Clique ID: ")) {
+                    document.getElementById("clique_id").value = "Clique ID: ";
+                }
+            };
+            document.getElementById("clique_id").focus();
         </script>
     </body>
 </html>

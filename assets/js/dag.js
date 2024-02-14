@@ -69,7 +69,9 @@ function create_dag(
 
       option = {
         title: {
-          text: clique_id,
+          text: clique_id.startsWith("C")
+            ? "Clique ID: " + clique_id.split("C")[1]
+            : clique_id,
           left: "center",
           textStyle: {
             fontSize: autoFontSize() + 10,
@@ -175,10 +177,11 @@ function create_dag(
             },
             emphasis: {
               focus: "none",
-              itemStyle: {
+              label: {
                 borderColor: "#000",
                 borderWidth: 2,
-                color: "#FFA505",
+                backgroundColor: "#FFA505",
+                color: "#000",
               },
             },
           },
