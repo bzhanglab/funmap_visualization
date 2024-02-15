@@ -3,17 +3,18 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>FunMap Hierarchical Organization</title>
+    <title>FunMap Gene Neighborhood Search</title>
     <script src="../assets/js/echarts.min.js"></script>
     <script src="../assets/js/min/dag.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="../assets/css/funmap.css" />
     <link rel="stylesheet" type="text/css" href="../docs/gd.min.css" />
     <style>
+        html {
+            background: none;
+        }
         body {
             overflow-x: hidden;
-            font-family: "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
-                "Helvetica Neue", sans-serif;
         }
 
         h1 {
@@ -33,8 +34,7 @@
 
         button {
             display: inline-block;
-            font-size: 1em;
-            font-size: 1vw;
+            font-size: 1.1875rem;
             line-height: var(--leading);
             font-family: var(--font);
             -webkit-font-smoothing: antialiased;
@@ -68,8 +68,10 @@
 
 <body>
     <div id="filler" style="height: 100%">
-        <h1>FunMap Gene Search</h1>
+        <h1>FunMap Gene Neighborhood Search</h1>
         <div class="centering">
+            <small style="color: var(--color-body-light)">Gene Neighborhood: Top 50 nodes with highest random walk
+                probability starting from a gene.</small>
             <h3 style="text-align: center">Gene Symbol</h3>
             <div class="container">
                 <input type="text" list="genes" class="text" id="clique_id" name="clique_id" value="RBM34" />
@@ -77,11 +79,34 @@
                 <button id="search_button">Search</button>
             </div>
         </div>
-        <div style="display: flexbox; align-content: center; vertical-align: center; width: 30%; height: 50%;">
-            <div id="dag" style="width: 100%; height: 100%; border: 1px solid black"></div>
-            <p style="color: var(--color-body-light); font-size: var(--unit); text-align: center">
-                Scroll to zoom, click and drag to move nodes.
-            <p>
+        <h4 id="gene_title:">Gene: </h4>
+        <div style="display: flex; align-content: center; vertical-align: center; width: 70%; height: 50%;">
+            <div style="width:60%; padding-right: 5%;">
+                <h5 style="margin-bottom: 0pt">GO Enrichment</h5>
+                <small style="color: var(--color-body-light)">Highest enriched GO terms for gene neighborhood using
+                    Over-Representation Analysis</small>
+                <table style="margin-top: 1em;">
+                    <thead>
+                        <tr>
+                            <th>GO Category</th>
+                            <th>Go ID</th>
+                            <th>Go Term</th>
+                            <th>FDR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_body"></tbody>
+                </table>
+                <h5 style="margin-bottom: 0pt">Neighborhood Members</h5>
+                <div id="members">
+                </div>
+                <button id="download_button">Download Network</button>
+            </div>
+            <div style="flex-grow:1;">
+                <div id="dag" style="width: 100%; height: 100%; border: 1px solid black"></div>
+                <p style="color: var(--color-body-light); font-size: var(--unit); text-align: center">
+                    Scroll to zoom, click and drag to move nodes.
+                <p>
+            </div>
         </div>
         <script>
             let gene_json = "../data/genes.json";
@@ -89,7 +114,7 @@
             fetch(gene_json)
                 .then((res) => res.json())
                 .then((gene_data) => {
-                    genelist = document.getElementById(gene_element);
+                    let genelist = document.getElementById(gene_element);
                     for (let i = 0; i < gene_data.length; i++) {
                         let option = document.createElement("option");
                         option.value = gene_data[i];
@@ -106,13 +131,61 @@
                     (ignore_size = true),
                     (host = "../"),
                 );
-                dag_chart.then((chart) =>
+                dag_chart.then((chart) => {
                     chart.dispatchAction({
                         type: "highlight",
                         seriesIndex: 0,
                         name: clique_id,
-                    }),
-                );
+                    });
+                    let member_data = chart.getOption().series[0].nodes;
+                    let member_list = document.getElementById("members");
+                    let member_text = "<small style=\"color: var(--color-body-light)\">Sorted from highest to lowest random walk probability</small><p>";
+                    for (let i = 0; i < member_data.length; i++) {
+                        let member = member_data[i];
+                        member_text += member.name;
+                        if (i != member_data.length - 1) {
+                            member_text += ", ";
+                        }
+                    }
+                    member_text += "</p>";
+                    member_list.innerHTML = member_text;
+                });
+                fetch(`../data/go/gene/${clique_id}.json`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        let table_body = document.getElementById("table_body");
+                        document.getElementById("gene_title:").innerHTML = `Gene: ${clique_id}`;
+                        table_body.innerHTML = "";
+                        let categories = ["gobp", "gomf", "gocc"];
+                        let category_name = {
+                            gobp: "Biological Process",
+                            gomf: "Molecular Function",
+                            gocc: "Cellular Component",
+                        };
+                        for (let i = 0; i < categories.length; i++) {
+                            let go_cat = categories[i];
+                            let row = document.createElement("tr");
+                            let go_category = document.createElement("td");
+                            let go_id = document.createElement("td");
+                            let go_term = document.createElement("td");
+                            let fdr = document.createElement("td");
+                            go_category.innerHTML = category_name[go_cat];
+                            let go_id_text = data[go_cat].set;
+                            go_id.innerHTML = `<a href="https://amigo.geneontology.org/amigo/term/${go_id_text}" target="_blank">${go_id_text}</a>`;
+                            go_term.innerHTML = data[go_cat].set_name;
+                            let fdr_val = parseFloat(data[go_cat].fdr);
+                            fdr.innerHTML = fdr_val != 0.0 ? fdr_val.toExponential(5) : "< 2.2e-16";
+                            row.appendChild(go_category);
+                            row.appendChild(go_id);
+                            row.appendChild(go_term);
+                            row.appendChild(fdr);
+                            table_body.appendChild(row);
+                        }
+                    });
+                    let download_button = document.getElementById("download_button");
+                    download_button.onclick = function() {
+                        window.open(`../data/dag/gene/${clique_id}.json`, "_blank");
+                    };
             }
             let button = document.getElementById("search_button");
             button.addEventListener("click", function () {

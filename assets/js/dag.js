@@ -33,7 +33,7 @@ function create_dag(
         let height = document.getElementById(element_id).offsetHeight;
         let new_size = Math.round(
           Math.sqrt(width * width + height * height) /
-            (12 + Math.log(clique_data.nodes.length)),
+          (12 + Math.log(clique_data.nodes.length)),
         );
         new_size = Math.min(new_size, 60);
         return new_size;
@@ -55,8 +55,8 @@ function create_dag(
         // );
         return Math.max(
           (100 / 11) * autoFontSize() +
-            100 * (0.05 * clique_data.nodes.length) -
-            100,
+          100 * (0.05 * clique_data.nodes.length) -
+          100,
           100,
         );
       }
@@ -68,11 +68,11 @@ function create_dag(
         let height = document.getElementById(element_id).offsetHeight;
         let map_height = Math.round(
           Math.sqrt(width * width + height * height) /
-            (7 + Math.log(clique_data.nodes.length)),
+          (7 + Math.log(clique_data.nodes.length)),
         );
         let map_width = Math.round(
           Math.sqrt(width * width + height * height) /
-            (90 + Math.log(clique_data.nodes.length)),
+          (90 + Math.log(clique_data.nodes.length)),
         );
         map_height = Math.min(map_height, 140);
         map_width = Math.min(map_width, 20);
@@ -116,6 +116,28 @@ function create_dag(
               show: true,
               title: "Data View",
               readOnly: true,
+              optionToContent: function (opt) {
+                var series = opt.series;
+                // var table = '<table style="width:100%;text-align:center"><tbody><tr>'
+                //   + '<td>Gene Symbol</td>'
+                //   + '<td>Signed P Value</td>'
+                //   + '</tr>';
+                var table = "<textarea style=\"height: 100%; width: 100%\" readonly>Gene Symbol\tSigned P Value\n";
+                for (var i = 0, l = series[0].nodes.length; i < l; i++) {
+                  table +=
+                    series[0].nodes[i].name +
+                    "\t" +
+                    series[0].nodes[i].value +
+                    "\n";
+                  // table += '<tr>'
+                  //   + '<td>' + series[0].nodes[i].name + '</td>'
+                  //   + '<td>' + series[0].nodes[i].value + '</td>'
+                  //   + '</tr>';
+                }
+                table += "</textarea>";
+                // table += '</tbody></table>';
+                return table;
+              }
             },
             saveAsImage: {
               show: true,
