@@ -71,7 +71,7 @@
         <h1>FunMap Gene Neighborhood Search</h1>
         <div class="centering">
             <small style="color: var(--color-body-light)">Gene Neighborhood: Top 50 nodes with highest random walk
-                probability starting from a gene.</small>
+                probability starting from a gene of interest.</small>
             <h3 style="text-align: center">Gene Symbol</h3>
             <div class="container">
                 <input type="text" list="genes" class="text" id="clique_id" name="clique_id" value="RBM34" />
@@ -79,12 +79,12 @@
                 <button id="search_button">Search</button>
             </div>
         </div>
-        <h4 id="gene_title:">Gene: </h4>
+        <h4 id="gene_title">Gene: </h4>
         <div style="display: flex; align-content: center; vertical-align: center; width: 70%; height: 50%;">
             <div style="width:60%; padding-right: 5%;">
                 <h5 style="margin-bottom: 0pt">GO Enrichment</h5>
                 <small style="color: var(--color-body-light)">Highest enriched GO terms for gene neighborhood using
-                    Over-Representation Analysis</small>
+                    over-representation analysis</small>
                 <table style="margin-top: 1em;">
                     <thead>
                         <tr>
@@ -99,7 +99,7 @@
                 <h5 style="margin-bottom: 0pt">Neighborhood Members</h5>
                 <div id="members">
                 </div>
-                <button id="download_button">Download Network</button>
+                <button id="download_button">Download Neighborhood</button>
             </div>
             <div style="flex-grow:1;">
                 <div id="dag" style="width: 100%; height: 100%; border: 1px solid black"></div>
@@ -154,7 +154,7 @@
                     .then((res) => res.json())
                     .then((data) => {
                         let table_body = document.getElementById("table_body");
-                        document.getElementById("gene_title:").innerHTML = `Gene: ${clique_id}`;
+                        document.getElementById("gene_title").innerHTML = `Gene: ${clique_id}`;
                         table_body.innerHTML = "";
                         let categories = ["gobp", "gomf", "gocc"];
                         let category_name = {
